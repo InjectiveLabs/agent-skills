@@ -30,6 +30,28 @@ Install via NPX:
 npx skills add https://github.com/InjectiveLabs/agent-skills --skill injective-cli
 ```
 
+## linear-cli
+
+Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
+
+Installing skill:
+
+```bash
+uvx upd-skill InjectiveLabs/linear-cli
+```
+
+Installing skill globally:
+
+```bash
+uvx upd-skill InjectiveLabs/linear-cli --global
+```
+
+Install via NPX:
+
+```bash
+npx skills add https://github.com/InjectiveLabs/agent-skills --skill linear-cli
+```
+
 ## License
 
 Apache-2.0
