@@ -3,7 +3,7 @@ name: injective-cli
 description: Use the Injective `injectived` CLI against a chain with consistent wallet, endpoint, and gas handling. Use the CLI map and reference docs to find commands and build transactions safely.
 license: Apache-2.0
 metadata:
-  author: injective-labs
+  author: InjectiveLabs
   version: "1.17.2"
 ---
 

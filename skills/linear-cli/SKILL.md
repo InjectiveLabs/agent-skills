@@ -1,12 +1,13 @@
 ---
 name: linear-cli
 description: Enables management of Linear issues, teams, projects, comments, or configuration via the `linear` CLI
+license: Apache-2.0
 metadata:
-  author: injective-labs
+  author: InjectiveLabs
   version: "1.9.1"
 ---
 
-# Linear CLI
+# Linear CLI Skill
 
 ## Overview
 
