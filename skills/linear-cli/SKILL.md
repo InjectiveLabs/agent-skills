@@ -54,6 +54,8 @@ Fetch binary for current platform using <https://github.com/InjectiveLabs/linear
 
 ## Command Reference
 
+Instead of guessing flag and command arguments, check the reference.
+
 See `references/commands.md` for the full command and flag list extracted from `linear completions bash`.
 
 When some command feels missing try `npx @injectivelabs/linear-cli@latest completions bash` to refresh the completions.
