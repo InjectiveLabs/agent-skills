@@ -4,7 +4,7 @@ description: Use the Injective `injectived` CLI against a chain with consistent 
 license: Apache-2.0
 metadata:
   author: InjectiveLabs
-  version: "1.17.2"
+  version: "1.18.0"
 ---
 
 # Injective CLI Skill
@@ -14,21 +14,22 @@ metadata:
 Use the `injectived` binary to query and transact against an Injective chain with consistent wallet handling, endpoint selection, and gas configuration. Use the bundled CLI command map and reference docs to find the right subcommands and flags quickly.
 By invoking any script in this skill, you agree to the Terms of Use in `TERMS_OF_USE`.
 
-## Quick Start
-
-1. Ensure an `injectived` binary is available (local install or docker).
-2. Use `references/injectived-cli-map.md` to navigate subcommands.
-3. Run `injectived <path> --help` to confirm flags before executing.
-
 ## Workflow
 
-### 1) Locate the binary
+### 1) Locate or install the binary
 
-Use a local `injectived` binary if possible. If it is not on PATH, pass the absolute path when running commands (or use a shell alias). If you must use Docker, run the CLI inside the container and point to the container's `injectived`.
+Use a local `injectived` binary if possible. If it is not on PATH,
+
+```bash
+npm i -g injective-core@latest
+```
+
+One-time commands can be run via `npx injective-core`, example: `npx injective-core --version`.
+The rest of documentation will use `injectived` as a reference.
 
 ### 2) Use the CLI against the chain
 
-Use `references/injectived-use.md` and `references/injectived-advanced.md` for CLI context, and home directory details. Use the command map `references/injectived-cli-map.md` to find the right subcommand. Spot check critical paths (for example `query`, `tx`, `keys`) by running `injectived <path> --help`.
+Spot check critical paths (for example `query`, `tx`, `keys`) by running `injectived <path> --help`.
 
 ### 3) Refresh the CLI command map (as needed)
 
@@ -50,9 +51,25 @@ diff -u references/injectived-cli-map.md /tmp/injectived-cli-map.new.md
   - mainnet chain-id: `injective-1`
   - testnet endpoint: `https://testnet.sentry.tm.injective.network:443`
   - testnet chain-id: `injective-888`
-- If the keystore prompts for a passphrase, pipe it in:
-  - `yes "passphrase" | injectived tx ...`
-  - `cat ~/.injectived/keystore_password.txt | injectived tx ...` (opt-in stored passphrase)
+- Keyring handling:
+  - Default behavior uses a passphrase-protected file keyring.
+  - If the keystore prompts for a passphrase, pipe it in:
+    - `yes "passphrase" | timeout 10s injectived tx ...` (one-off/manual passphrase entry pattern)
+    - `cat ~/.injectived/keystore_password.txt | timeout 10s injectived tx ...` (opt-in stored passphrase)
+  - Agent behavior for persisted passphrase files:
+    - Use `~/.injectived/keystore_password.txt` only when the user explicitly opts in to storing the passphrase on disk.
+    - Treat this as sensitive local secret material (file mode `600`), and do not print passphrase contents in command output or logs.
+    - Keep `timeout 10s` on keyring-touching commands to prevent hangs while waiting for unlock input.
+  - `--keyring-backend test` is available and skips passphrase prompts, but it is not safe and leaves private keys exposed. Use only for local, disposable workflows.
+  - Raw Ethereum private key import/export uses unsafe commands:
+    - `injectived keys unsafe-export-eth-key <key_name>`
+    - `injectived keys unsafe-import-eth-key <key_name> <hex_private_key>`
+  - These commands are marked unsafe, but they are the required path for raw HEX private key workflows.
+  - Never share raw HEX private keys in open channels or public communication.
+- Ledger signing:
+  - Use `--ledger --sign-mode amino-ledger` on Ledger-backed transactions.
+  - Example:
+    - `injectived tx bank send <from> <to> <amount> --ledger --sign-mode amino-ledger --chain-id injective-1 --gas auto --gas-prices 160000000inj --yes`
 - Use `--yes` on transactions to skip interactive confirmation.
 - Use `--gas auto --gas-adjustment 1.5 --gas-prices 160000000inj` for fee estimation.
 - After broadcasting, verify with `injectived q tx <tx_hash>`.
@@ -67,5 +84,3 @@ diff -u references/injectived-cli-map.md /tmp/injectived-cli-map.new.md
 ### references/
 
 - `injectived-cli-map.md`: Command map for the `injectived` binary.
-- `injectived-use.md`: Official usage documentation (Mintlify export).
-- `injectived-advanced.md`: Advanced CLI documentation (Mintlify export).
