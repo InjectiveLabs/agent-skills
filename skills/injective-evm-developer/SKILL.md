@@ -50,40 +50,32 @@ It builds on a baseline of skills that apply to developing on any EVM network, a
 
 Address: `0x0000000000000000000000000000000000000064`
 
-Solidity interface exposed by the `bank` precompile:
-
-```solidity
-interface IBankModule {
-    function mint(address,uint256) external payable returns (bool);
-    function balanceOf(address,address) external view returns (uint256);
-    function burn(address,uint256) external payable returns (bool);
-    function transfer(address,address,uint256) external payable returns (bool);
-    function totalSupply(address) external view returns (uint256);
-    function metadata(address) external view returns (string memory,string memory,uint8);
-    function setMetadata(string memory,string memory,uint8) external payable returns (bool);
-}
-```
+Solidity interface exposed by the `bank` precompile: See `./assets/Bank.sol`
 
 The ABI for the `bank` precompile may be obtained by converting the interface above.
 
-Base of a MultiVM Token Standard (MTS) token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/BankERC20.sol
+BankERC20 is a "base implementation for MultiVM Token Standard (MTS) token, which is designed to be extended: See `./assets/BankERC20.sol`
 - Note that this implementation extends the ERC20 implementation from OpenZeppelin, then overrides certain functions to invoke the `bank` precompile
 - In order to use it, you only need to extend `BankERC20`
 - Ensure that your constructor (or function responsible for 1st mint) is `payable`
-- The simplest canonical implementation of an MTS token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/FixedSupplyBankERC20.sol
-- The most heavily used implementation of an MTS token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/WINJ9.sol (used in wrapped INJ)
+- The simplest canonical implementation of an MTS token: See `./assets/FixedSupplyBankERC20.sol`
+- The most heavily used implementation of an MTS token: See `./assets/WINJ9.sol` (used in wrapped INJ)
 
 Reference: https://docs.injective.network/developers-evm/bank-precompile.md
+
+Note that all `./assets/*.sol` files can be found in `https://raw.githubusercontent.com/InjectiveLabs/solidity-contracts/refs/heads/master/src/*.sol`
 
 ### Using the `exchange` precompile
 
 Address: `0x0000000000000000000000000000000000000065`
 
-Solidity interface exposed by the `exchange` precompile: https://github.com/InjectiveLabs/solidity-contracts/raw/refs/heads/master/src/Exchange.sol
+Solidity interface exposed by the `exchange` precompile:  See `./assets/Exchange.sol`
 
 The ABI for the `exchange` precompile may be obtained by converting the interface above.
 
 Reference: https://docs.injective.network/developers-evm/exchange-precompile.md
+
+Note that all `./assets/*.sol` files can be found in `https://raw.githubusercontent.com/InjectiveLabs/solidity-contracts/refs/heads/master/src/*.sol`
 
 ### Configure Injective network details
 
