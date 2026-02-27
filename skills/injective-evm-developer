@@ -1,7 +1,7 @@
 ---
 name: injective-evm-developer 
 description: Develop smart contracts and dApps on Injective EVM
-activates_on: ["*.sol", "hardhat.config.*", "foundry.toml"]
+activates_on: ["*.sol", "hardhat.config.*", "foundry.toml", "*.ts", "*.js"]
 uses: ["solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
 license: MIT
 metadata:
@@ -10,6 +10,10 @@ metadata:
 ---
 
 # Injective EVM Developer Guide
+
+Injective is a layer 1 blockchains that is simultaneously both EVM and Cosmos.
+Use this skill when building on Injective's EVM.
+It builds on a baseline of skills that apply to developing on any EVM network, and augments that with Injective specifics.
 
 ## When to apply
 
@@ -85,6 +89,15 @@ Reference: https://docs.injective.network/developers-evm/exchange-precompile.md
 - This is where you will find common information such as the JSON-RPC endpoint: https://docs.injective.network/developers-evm/network-information.md
   - "Injective EVM Mainnet" tab contains the configuration for Mainnet
   - "Injective EVM Testnet" tab contains the configuration for Testnet
+
+#### Tool and library choices
+
+- If undecided on framework
+  - Use foundry if you wish to work with Injective's EVM precompiles and emulate them locally
+    - Specifically use the Injective version of foundry, available from: https://github.com/InjectiveLabs/foundry/releases
+  - Use hardhat if you are not using Injective's EVM precompiles, or do not need to emulate them locally
+- If undecided on client library
+  - Use viem as its API is easier to understand
 
 #### Injective network for hardhat
 
@@ -168,6 +181,14 @@ main()
 
 ```
 
+To verify a smart contract with the above configuration and constructor args, run the following command:
+
+```shell
+npx hardhat verify --force \
+  --constructor-args ./script/constructor-args.js \
+  --network inj_testnet ${SMART_CONTRACT_ADDRESS}
+```
+
 #### Injective network for viem
 
 The `viem/chains` repo already contains pre-configured network details for both Injective Mainnet and Injective Testnet, you simply need to import them:
@@ -245,6 +266,16 @@ Note that the `client` object will be able to use both `client.readContract` and
     - Find more instructions at: https://docs.injective.network/developers/ai/mcp.md
   - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/
 
+### Troubleshooting common issues
+
+#### Convert between EVM and bech32 formats for addresses
+
+See: https://docs.injective.network/developers/convert-addresses#convert-hex-bech32-address
+
+#### Gas estimation
+
+Manually set a gas price of 160 million (`160e6` in Javascript) for transactions.
+
 ## Related skills
 
 This skill is specific to Injective's EVM.
@@ -267,7 +298,9 @@ It augments *other skills* that should be used for general EVM developer activit
     - `solidity-gas-optimization`
     - `solidity-adversarial-analysis`
 
-If these skills are not available, run the following command to install them:
+## Prerequisites
+
+If the "related skills" are not available, run the following command to install them:
 
 ```shell
 npx skills add whackur/solidity-agent-toolkit
