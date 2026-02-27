@@ -34,8 +34,8 @@ metadata:
   - Note: DDoS protection - Only works for new accounts (cannot have any balance)
 - Otherwise:
   - Visit https://cloud.google.com/application/web3/faucet/injective/testnet
-  - Paste the bech32 address of your wallet account (starts with `inj`) into the text field for "EVM address"
-  - Press the "Request Tokens" button
+  - Paste the bech32 address of your wallet account (starts with `inj`) into the text field for "Wallet address"
+  - Press the "Get Testnet INJ" button
   - Expect: 10 INJ to arrive in your wallet after ~ 10 seconds
   - Note: DDoS protection - You must be signed into a Google account
   - Note: Works for new and existing accounts (can have a balance) - but cannot have requested in the past 24 hours
@@ -240,7 +240,7 @@ Note that the `client` object will be able to use both `client.readContract` and
 
 - The Injective developer documentation is available
   - In markdown from: https://docs.injective.network/llms.txt
-  - As an MCP sever with a search function from: https://docs.injective.network/mcp (streamable HTTP transport)
+  - As an MCP server with a search function from: https://docs.injective.network/mcp (streamable HTTP transport)
     - Use the `SearchInjectiveDocs` MCP tool with a `query` parameter as your search string
     - Find more instructions at: https://docs.injective.network/developers/ai/mcp.md
   - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/
