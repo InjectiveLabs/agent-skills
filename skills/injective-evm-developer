@@ -1,0 +1,274 @@
+---
+name: injective-evm-developer 
+description: Develop smart contracts and dApps on Injective EVM
+activates_on: ["*.sol", "hardhat.config.*", "foundry.toml"]
+uses: ["solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
+license: MIT
+metadata:
+  author: bguiz
+  version: "0.0.0"
+---
+
+# Injective EVM Developer Guide
+
+## When to apply
+
+- Obtain Injective Testnet funds from faucets
+- Interact with native Injective modules via EVM precompiles
+  - `bank` precompile
+  - `exchange` precompile
+- Configure Injective network details
+- Consult Injective documentation
+
+## Activities
+
+### Faucet
+
+- Note: Only for Injective Testnet
+- If you have a brand new wallet, and need up to 1 INJ:
+  - Visit https://testnet.faucet.injective.network/
+  - Paste the EVM address of your wallet account (starts with `0x`) into the text field for "EVM address"
+  - Solve the "hCaptcha"
+  - Press the "Request Tokens" button
+  - Expect: 1 INJ plus some USDT to arrive in your wallet after around ~ 1 minute
+  - Note: DDoS protection - Only works for new accounts (cannot have any balance)
+- Otherwise:
+  - Visit https://cloud.google.com/application/web3/faucet/injective/testnet
+  - Paste the bech32 address of your wallet account (starts with `inj`) into the text field for "EVM address"
+  - Press the "Request Tokens" button
+  - Expect: 10 INJ to arrive in your wallet after ~ 10 seconds
+  - Note: DDoS protection - You must be signed into a Google account
+  - Note: Works for new and existing accounts (can have a balance) - but cannot have requested in the past 24 hours
+- These steps are unlikely to work through agent automation due to DDoS protections
+  - If you get stuck, prompt your human to complete the remaining steps
+
+### Using the `bank` precompile
+
+Address: `0x0000000000000000000000000000000000000064`
+
+Solidity interface exposed by the `bank` precompile:
+```solidity
+interface IBankModule {
+    function mint(address,uint256) external payable returns (bool);
+    function balanceOf(address,address) external view returns (uint256);
+    function burn(address,uint256) external payable returns (bool);
+    function transfer(address,address,uint256) external payable returns (bool);
+    function totalSupply(address) external view returns (uint256);
+    function metadata(address) external view returns (string memory,string memory,uint8);
+    function setMetadata(string memory,string memory,uint8) external payable returns (bool);
+}
+```
+
+The ABI for the `bank` precompile may be obtained by converting the interface above.
+
+Base of a MultiVM Token Standard (MTS) token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/BankERC20.sol
+- Note that this implementation extends the ERC20 implementation from OpenZeppelin, then overrides certain functions to invoke the `bank` precompile
+- In order to use it, you only need to extend `BankERC20`
+- Ensure that your constructor (or function responsible for 1st mint) is `payable`
+- The simplest canonical implementation of an MTS token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/FixedSupplyBankERC20.sol
+- The most heavily used implementation of an MTS token: https://github.com/InjectiveLabs/solidity-contracts/blob/master/src/WINJ9.sol (used in wrapped INJ)
+
+Reference: https://docs.injective.network/developers-evm/bank-precompile.md
+
+### Using the `exchange` precompile
+
+Address: `0x0000000000000000000000000000000000000065`
+
+Solidity interface exposed by the `exchange` precompile: https://github.com/InjectiveLabs/solidity-contracts/raw/refs/heads/master/src/Exchange.sol
+
+The ABI for the `exchange` precompile may be obtained by converting the interface above.
+
+Reference: https://docs.injective.network/developers-evm/exchange-precompile.md
+
+### Configure Injective network details
+
+- This is where you will find common information such as the JSON-RPC endpoint: https://docs.injective.network/developers-evm/network-information.md
+  - "Injective EVM Mainnet" tab contains the configuration for Mainnet
+  - "Injective EVM Testnet" tab contains the configuration for Testnet
+
+#### Injective network for hardhat
+
+Sample `hardhat.config.js` file for Injective EVM testnet.
+
+```js
+require('@nomicfoundation/hardhat-toolbox');
+require('dotenv').config();
+
+/** @type import('hardhat/config').HardhatUserConfig */
+module.exports = {
+  solidity: '0.8.28',
+  networks: {
+    inj_testnet: {
+      url: process.env.INJ_TESTNET_RPC_URL || 'https://k8s.testnet.json-rpc.injective.network/',
+      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
+      chainId: 1439,
+    },
+  },
+  etherscan: {
+    apiKey: {
+      inj_testnet: 'nil',
+    },
+    customChains: [
+      {
+        network: 'inj_testnet',
+        chainId: 1439,
+        urls: {
+          apiURL: 'https://testnet.blockscout-api.injective.network/api',
+          browserURL: 'https://testnet.blockscout.injective.network/',
+        },
+      },
+    ],
+  },
+  sourcify: {
+    enabled: false,
+  },
+};
+```
+
+Sample `script/deploy.js` file for Injective Testnet.
+
+```js
+const constructorArgs = require('./constructor-args.js');
+
+async function deploy(name, constructorArgs, deployTxOptions) {
+    const smartContractFactory =
+        await ethers.getContractFactory(name);
+    const smartContractInstance =
+        await smartContractFactory.deploy(...constructorArgs, deployTxOptions);
+    await smartContractInstance.waitForDeployment();
+    const smartContractAddress =
+        await smartContractInstance.getAddress();
+
+    console.log(
+        `Smart contract deployed: ${smartContractAddress} - ${name}\n    https://testnet.blockscout.injective.network/address/${smartContractAddress}?tab=contract`,
+    );
+}
+
+async function main() {
+    await deploy('MySmartContractName',
+        constructorArgs,
+        {
+            // Pay 1INJ (1e18inj) to the constructor
+            value: 1_000_000_000_000_000_000n,
+            gasPrice: 160e6,
+            gasLimit: 2e6,
+        },
+    );
+}
+
+main()
+    .then(() => {
+        console.log('Deployment script executed successfully.');
+        process.exit(0);
+    })
+    .catch((error) => {
+        console.error(error);
+        process.exitCode = 1;
+    });
+
+```
+
+#### Injective network for viem
+
+The `viem/chains` repo already contains pre-configured network details for both Injective Mainnet and Injective Testnet, you simply need to import them:
+
+```js
+import { injective, injectiveTestnet } from 'viem/chains';
+```
+
+Within a dApp, to connect to Injective Testnet, and switch to the network, use the following function:
+
+```js
+
+async function connectEvmWallet() {
+    if (typeof window?.ethereum === 'undefined') {
+        return {
+            ok: false,
+            error: 'no injected web3 provider detected',
+        };
+    }
+
+    let client;
+    try {
+        client = createWalletClient({
+            chain: injectiveTestnet,
+            transport: custom(window.ethereum),
+        }).extend(publicActions);
+    } catch (ex) {
+        return {
+            ok: false,
+            error: 'unable to initialise wallet client',
+        };
+    }
+
+    let address;
+    try {
+        [address] = await client.requestAddresses();
+    } catch (ex) {
+        return {
+            ok: false,
+            error: 'unable to obtain account details',
+        };
+    }
+
+    let chainId;
+    try {
+        console.log(`switching network to chain ID: ${injectiveTestnet.id}`);
+        await client.switchChain({
+            id: injectiveTestnet.id,
+        });
+    } catch (error) {
+        return {
+            ok: false,
+            error: 'unable to switch to target network',
+        };
+    }
+    chainId = parseInt(await client.request({ method: 'eth_chainId' }), 16);
+    console.log({ chainId });
+
+    return {
+        ok: true,
+        address,
+        client,
+    };
+}
+```
+
+Note that the `client` object will be able to use both `client.readContract` and `client.writeContract` to interact with smart contracts.
+
+### Consult Injective documentation
+
+- The Injective developer documentation is available
+  - In markdown from: https://docs.injective.network/llms.txt
+  - As an MCP sever with a search function from: https://docs.injective.network/mcp (streamable HTTP transport)
+    - Use the `SearchInjectiveDocs` MCP tool with a `query` parameter as your search string
+    - Find more instructions at: https://docs.injective.network/developers/ai/mcp.md
+  - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/
+
+## Related skills
+
+This skill is specific to Injective's EVM.
+It augments *other skills* that should be used for general EVM developer activities, including:
+
+- Developing on Injective's EVM
+  - Using hardhat or foundry
+  - Smart contracts using Solidity
+    - compile/ test/ deploy/ verify (via blockscout)
+  - dApps that interact with deployed smart contracts
+    - ethers.js/ viem
+
+- Basic skills:
+    - `solidity-hardhat-development`
+    - `solidity-foundry-development`
+    - `solidity-code-review`
+    - `solidity-erc-standards`
+- Advanced skills:
+    - `solidity-security-best-practices`
+    - `solidity-gas-optimization`
+    - `solidity-adversarial-analysis`
+
+If these skills are not available, run the following command to install them:
+
+```shell
+npx skills add whackur/solidity-agent-toolkit
+```
