@@ -51,6 +51,7 @@ It builds on a baseline of skills that apply to developing on any EVM network, a
 Address: `0x0000000000000000000000000000000000000064`
 
 Solidity interface exposed by the `bank` precompile:
+
 ```solidity
 interface IBankModule {
     function mint(address,uint256) external payable returns (bool);
