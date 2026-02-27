@@ -1,5 +1,5 @@
 ---
-name: injective-evm-developer 
+name: injective-evm-developer
 description: Develop smart contracts and dApps on Injective EVM
 activates_on: ["*.sol", "hardhat.config.*", "foundry.toml", "*.ts", "*.js"]
 uses: ["solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
@@ -11,7 +11,7 @@ metadata:
 
 # Injective EVM Developer Guide
 
-Injective is a layer 1 blockchains that is simultaneously both EVM and Cosmos.
+Injective is a layer 1 blockchain that is simultaneously both EVM and Cosmos.
 Use this skill when building on Injective's EVM.
 It builds on a baseline of skills that apply to developing on any EVM network, and augments that with Injective specifics.
 
@@ -56,7 +56,7 @@ The ABI for the `bank` precompile may be obtained by converting the interface ab
 
 BankERC20 is a "base implementation for MultiVM Token Standard (MTS) token, which is designed to be extended: See `./assets/BankERC20.sol`
 - Note that this implementation extends the ERC20 implementation from OpenZeppelin, then overrides certain functions to invoke the `bank` precompile
-- In order to use it, you only need to extend `BankERC20`
+- The easiest way is to extend `BankERC20`
 - Ensure that your constructor (or function responsible for 1st mint) is `payable`
 - The simplest canonical implementation of an MTS token: See `./assets/FixedSupplyBankERC20.sol`
 - The most heavily used implementation of an MTS token: See `./assets/WINJ9.sol` (used in wrapped INJ)
@@ -94,91 +94,16 @@ Note that all `./assets/*.sol` files can be found in `https://raw.githubusercont
 
 #### Injective network for hardhat
 
-Sample `hardhat.config.js` file for Injective EVM testnet.
+Sample `hardhat.config.js` file for Injective EVM testnet: See `./assets/hardhat-testnet-config.js`.
 
-```js
-require('@nomicfoundation/hardhat-toolbox');
-require('dotenv').config();
+Sample `script/deploy.js` file for Injective Testnet. See `./assets/hardhat-deploy-script.js`.
 
-/** @type import('hardhat/config').HardhatUserConfig */
-module.exports = {
-  solidity: '0.8.28',
-  networks: {
-    inj_testnet: {
-      url: process.env.INJ_TESTNET_RPC_URL || 'https://k8s.testnet.json-rpc.injective.network/',
-      accounts: process.env.PRIVATE_KEY ? [process.env.PRIVATE_KEY] : [],
-      chainId: 1439,
-    },
-  },
-  etherscan: {
-    apiKey: {
-      inj_testnet: 'nil',
-    },
-    customChains: [
-      {
-        network: 'inj_testnet',
-        chainId: 1439,
-        urls: {
-          apiURL: 'https://testnet.blockscout-api.injective.network/api',
-          browserURL: 'https://testnet.blockscout.injective.network/',
-        },
-      },
-    ],
-  },
-  sourcify: {
-    enabled: false,
-  },
-};
-```
-
-Sample `script/deploy.js` file for Injective Testnet.
-
-```js
-const constructorArgs = require('./constructor-args.js');
-
-async function deploy(name, constructorArgs, deployTxOptions) {
-    const smartContractFactory =
-        await ethers.getContractFactory(name);
-    const smartContractInstance =
-        await smartContractFactory.deploy(...constructorArgs, deployTxOptions);
-    await smartContractInstance.waitForDeployment();
-    const smartContractAddress =
-        await smartContractInstance.getAddress();
-
-    console.log(
-        `Smart contract deployed: ${smartContractAddress} - ${name}\n    https://testnet.blockscout.injective.network/address/${smartContractAddress}?tab=contract`,
-    );
-}
-
-async function main() {
-    await deploy('MySmartContractName',
-        constructorArgs,
-        {
-            // Pay 1INJ (1e18inj) to the constructor
-            value: 1_000_000_000_000_000_000n,
-            gasPrice: 160e6,
-            gasLimit: 2e6,
-        },
-    );
-}
-
-main()
-    .then(() => {
-        console.log('Deployment script executed successfully.');
-        process.exit(0);
-    })
-    .catch((error) => {
-        console.error(error);
-        process.exitCode = 1;
-    });
-
-```
-
-To verify a smart contract with the above configuration and constructor args, run the following command:
+To verify a smart contract with the above configuration and constructor args,
+create a `constructor-args.js` file, run the following command:
 
 ```shell
 npx hardhat verify --force \
-  --constructor-args ./script/constructor-args.js \
+  --constructor-args ./constructor-args.js \
   --network inj_testnet ${SMART_CONTRACT_ADDRESS}
 ```
 
@@ -190,63 +115,7 @@ The `viem/chains` repo already contains pre-configured network details for both 
 import { injective, injectiveTestnet } from 'viem/chains';
 ```
 
-Within a dApp, to connect to Injective Testnet, and switch to the network, use the following function:
-
-```js
-
-async function connectEvmWallet() {
-    if (typeof window?.ethereum === 'undefined') {
-        return {
-            ok: false,
-            error: 'no injected web3 provider detected',
-        };
-    }
-
-    let client;
-    try {
-        client = createWalletClient({
-            chain: injectiveTestnet,
-            transport: custom(window.ethereum),
-        }).extend(publicActions);
-    } catch (ex) {
-        return {
-            ok: false,
-            error: 'unable to initialise wallet client',
-        };
-    }
-
-    let address;
-    try {
-        [address] = await client.requestAddresses();
-    } catch (ex) {
-        return {
-            ok: false,
-            error: 'unable to obtain account details',
-        };
-    }
-
-    let chainId;
-    try {
-        console.log(`switching network to chain ID: ${injectiveTestnet.id}`);
-        await client.switchChain({
-            id: injectiveTestnet.id,
-        });
-    } catch (error) {
-        return {
-            ok: false,
-            error: 'unable to switch to target network',
-        };
-    }
-    chainId = parseInt(await client.request({ method: 'eth_chainId' }), 16);
-    console.log({ chainId });
-
-    return {
-        ok: true,
-        address,
-        client,
-    };
-}
-```
+Within a dApp, to connect to Injective Testnet, and switch to the network, use the following function: See `./assets/dapp-viem-connect-evm-wallet-function.js`.
 
 Note that the `client` object will be able to use both `client.readContract` and `client.writeContract` to interact with smart contracts.
 
@@ -265,9 +134,11 @@ Note that the `client` object will be able to use both `client.readContract` and
 
 See: https://docs.injective.network/developers/convert-addresses#convert-hex-bech32-address
 
-#### Gas estimation
+#### Gas configuration
 
-Manually set a gas price of 160 million (`160e6` in Javascript) for transactions.
+For gas price: Manually set a hardcoded value of 160 million (`160e6` in Javascript) for transactions.
+
+For gas amount, use the default mechanism: The `eth_estimateGas` RPC, which should be invoked when needed by ethers.js or viem.
 
 ## Related skills
 
