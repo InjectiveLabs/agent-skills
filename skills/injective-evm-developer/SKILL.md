@@ -24,6 +24,8 @@ It builds on a baseline of skills that apply to developing on any EVM network, a
 - Configure Injective network details
 - Consult Injective documentation
 
+See for detailed list of user stories: `./references/user-stories.md`
+
 ## Activities
 
 ### Faucet
@@ -83,6 +85,10 @@ Note that all `./assets/*.sol` files can be found in `https://raw.githubusercont
   - "Injective EVM Mainnet" tab contains the configuration for Mainnet
   - "Injective EVM Testnet" tab contains the configuration for Testnet
 
+### Production aplication integrations cheat sheet
+
+See: https://docs.injective.network/developers-evm/evm-integrations-cheat-sheet.md
+
 #### Tool and library choices
 
 - If undecided on framework
@@ -126,7 +132,7 @@ Note that the `client` object will be able to use both `client.readContract` and
   - As an MCP server with a search function from: https://docs.injective.network/mcp (streamable HTTP transport)
     - Use the `SearchInjectiveDocs` MCP tool with a `query` parameter as your search string
     - Find more instructions at: https://docs.injective.network/developers/ai/mcp.md
-  - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/
+  - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/developers-evm/
 
 ### Troubleshooting common issues
 
@@ -139,6 +145,10 @@ See: https://docs.injective.network/developers/convert-addresses#convert-hex-bec
 For gas price: Manually set a hardcoded value of 160 million (`160e6` in Javascript) for transactions.
 
 For gas amount, use the default mechanism: The `eth_estimateGas` RPC, which should be invoked when needed by ethers.js or viem.
+
+### All other FAQs
+
+See: https://docs.injective.network/developers-evm/evm-integrations-faq.md
 
 ## Related skills
 
