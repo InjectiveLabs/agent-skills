@@ -1,6 +1,6 @@
 ---
 name: injective-evm-developer
-description: Develop smart contracts and dApps on Injective EVM
+description: Develop EVM smart contracts and dApps on Injective
 activates_on: ["*.sol", "hardhat.config.*", "foundry.toml", "*.ts", "*.js"]
 uses: ["solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
 license: MIT

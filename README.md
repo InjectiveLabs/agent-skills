@@ -30,6 +30,12 @@ Install via NPX:
 npx skills add https://github.com/InjectiveLabs/agent-skills --skill injective-cli
 ```
 
+## injective-evm-developer
+
+Develop EVM smart contracts and dApps on Injective.
+
+See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md).
+
 ## linear-cli
 
 Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
