@@ -25,6 +25,7 @@ It builds on a baseline of skills that apply to developing on any EVM network, a
 - Consult Injective documentation
 
 See for detailed list of user stories: `./references/user-stories.md`
+Their associated sample prompts: `./references/sample-prompts.md`
 
 ## Activities
 

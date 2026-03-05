@@ -22,8 +22,8 @@ npx skills add InjectiveLabs/agent-skills --global --skill injective-evm-develop
 Once you have a skill installed, when you enter a prompt in your agent that supports skills
 (specifically an AI development harness, such as Claude Code),
 the harness will use the LLM and determine whether it is appropriate to activate this skill,
-based on the metadata in the `SKILL.md` file.
+based on your prompt and contents of the `SKILL.md` file.
 
 In other words, just prompt as you would anyway, and if relevant, this skill should activate.
 
-See `references/user-stories.md` within the directory of this skill for user stories and sample prompts.
+See `references/sample-prompts.md` within the skill directory for sample prompts.
