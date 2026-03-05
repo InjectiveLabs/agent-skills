@@ -34,7 +34,14 @@ npx skills add https://github.com/InjectiveLabs/agent-skills --skill injective-c
 
 Develop EVM smart contracts and dApps on Injective.
 
-See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md).
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
+```
+
+See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md)
+for more information.
 
 ## linear-cli
 

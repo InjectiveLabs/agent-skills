@@ -5,7 +5,7 @@ Note that this skill conforms to the [Agent Skills specification](https://agents
 
 ## Installation
 
-Install via NPM into current directory, for use in current proejct only:
+Install via NPM into current directory, for use in current project only:
 
 ```bash
 npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
