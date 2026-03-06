@@ -43,6 +43,19 @@ npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
 See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md)
 for more information.
 
+## injective-mcp-servers
+
+Set up and use MCP servers that are important for Injective.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
+```
+
+See [`skills/injective-mcp-servers`](./skills/injective-mcp-servers/README.md)
+for more information.
+
 ## linear-cli
 
 Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
