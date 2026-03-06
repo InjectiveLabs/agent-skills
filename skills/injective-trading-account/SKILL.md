@@ -76,7 +76,7 @@ Returns: `{ symbol, name, decimals, type, peggyDenom }`
 
 ## Activities
 
-When the user's request contains the following questions, map them to the indicated MCP tool calls.
+When the user's request contains the following questions, map them to the MCP tool calls indicated.
 
 ### "What's my balance?"
 
