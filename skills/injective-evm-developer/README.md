@@ -1,6 +1,6 @@
 # Injective EVM Developer skill
 
-Read the [`SKILL.md`] file, as it is self-describing (as all skill files should be).
+Read the [`SKILL.md`](./SKILL.md) file, as it is self-describing (as all skill files should be).
 Note that this skill conforms to the [Agent Skills specification](https://agentskills.io/specification).
 
 ## Installation

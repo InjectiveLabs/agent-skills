@@ -2,7 +2,7 @@
 name: injective-evm-developer
 description: Develop EVM smart contracts and dApps on Injective
 activates_on: ["*.sol", "hardhat.config.*", "foundry.toml", "*.ts", "*.js"]
-uses: ["solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
+uses: ["injective-mcp-servers", "solidity-hardhat-development", "solidity-foundry-development", "solidity-code-review", "solidity-erc-standards", "solidity-security-best-practices", "solidity-gas-optimization", "solidity-adversarial-analysis"]
 license: MIT
 metadata:
   author: bguiz
@@ -86,18 +86,18 @@ Note that all `./assets/*.sol` files can be found in `https://raw.githubusercont
   - "Injective EVM Mainnet" tab contains the configuration for Mainnet
   - "Injective EVM Testnet" tab contains the configuration for Testnet
 
-### Production aplication integrations cheat sheet
+### Production application integrations cheat sheet
 
 See: https://docs.injective.network/developers-evm/evm-integrations-cheat-sheet.md
 
 #### Tool and library choices
 
 - If undecided on framework
+  - Use hardhat if you are not using Injective's EVM precompiles, or do not need to emulate them locally
   - Use foundry if you wish to work with Injective's EVM precompiles and emulate them locally
     - Specifically use the Injective version of foundry, available from: https://github.com/InjectiveLabs/foundry/releases
-  - Use hardhat if you are not using Injective's EVM precompiles, or do not need to emulate them locally
 - If undecided on client library
-  - Use viem as its API is easier to understand
+  - Use viem, as its API is easier to understand
 
 #### Injective network for hardhat
 
@@ -130,9 +130,7 @@ Note that the `client` object will be able to use both `client.readContract` and
 
 - The Injective developer documentation is available
   - In markdown from: https://docs.injective.network/llms.txt
-  - As an MCP server with a search function from: https://docs.injective.network/mcp (streamable HTTP transport)
-    - Use the `SearchInjectiveDocs` MCP tool with a `query` parameter as your search string
-    - Find more instructions at: https://docs.injective.network/developers/ai/mcp.md
+  - As an MCP server with a search function: Use the `injective-mcp-servers` skill, with the "Injective Documentation MCP Server"
   - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/developers-evm/
 
 ### Troubleshooting common issues
@@ -154,8 +152,11 @@ See: https://docs.injective.network/developers-evm/evm-integrations-faq.md
 ## Related skills
 
 This skill is specific to Injective's EVM.
-It augments *other skills* that should be used for general EVM developer activities, including:
+It augments *other skills* that should be used for general EVM developer activities.
 
+These include:
+
+- Interacting with Injective's documentation MCP server
 - Developing on Injective's EVM
   - Using hardhat or foundry
   - Smart contracts using Solidity
@@ -164,6 +165,7 @@ It augments *other skills* that should be used for general EVM developer activit
     - ethers.js/ viem
 
 - Basic skills:
+    - `injective-mcp-servers`
     - `solidity-hardhat-development`
     - `solidity-foundry-development`
     - `solidity-code-review`
@@ -178,5 +180,6 @@ It augments *other skills* that should be used for general EVM developer activit
 If the "related skills" are not available, run the following command to install them:
 
 ```shell
+npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
 npx skills add whackur/solidity-agent-toolkit
 ```
