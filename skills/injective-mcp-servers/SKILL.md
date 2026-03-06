@@ -9,7 +9,7 @@ metadata:
 
 # Injective MCP Servers Guide
 
-Model-Context-Protocol (MCP) servers facililtate discovery and expose tools, intended to be called by LLMs.
+Model-Context-Protocol (MCP) servers facilitate discovery and expose tools, intended to be called by LLMs.
 This skill provides instructions on how to set up and use MCP servers that are important for Injective.
 
 ## When to apply
@@ -30,7 +30,7 @@ which exposes a streamable HTTP endpoint that most MCP clients are able to consu
 
 Perform MCP tool calls:
 
-- `SearchInjectiveDocs`- Searches official Injective documnetation. Returns results including citations.
+- `SearchInjectiveDocs`- Searches official Injective documentation. Returns results including citations.
 
 See: https://docs.injective.network/developers-ai/documentation-mcp.md
 
@@ -45,7 +45,7 @@ npm install && npm run build
 
 Run manually:
 
-```
+```shell
 INJECTIVE_NETWORK="mainnet" node ./dist/mcp/server.js
 ```
 
@@ -104,4 +104,5 @@ This skill does not use or depend upon any other skill.
 
 ## Prerequisites
 
-Must have Node.Js v22 or higher, find out by running `node -v`.
+Must have node.js v22 or higher.
+Check with `node -v`.
