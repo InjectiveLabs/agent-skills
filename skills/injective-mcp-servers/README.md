@@ -1,4 +1,4 @@
-# Injective EVM Developer skill
+# Injective MCP Servers skill
 
 Read the [`SKILL.md`](./SKILL.md) file, as it is self-describing (as all skill files should be).
 Note that this skill conforms to the [Agent Skills specification](https://agentskills.io/specification).
@@ -8,13 +8,13 @@ Note that this skill conforms to the [Agent Skills specification](https://agents
 Install via NPM into current directory, for use in current project only:
 
 ```bash
-npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
+npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
 ```
 
 Install via NPM globally, for use in all projects:
 
 ```bash
-npx skills add InjectiveLabs/agent-skills --global --skill injective-evm-developer
+npx skills add InjectiveLabs/agent-skills --global --skill injective-mcp-servers
 ```
 
 ## Usage
@@ -27,3 +27,6 @@ based on your prompt and contents of the `SKILL.md` file.
 In other words, just prompt as you would anyway, and if relevant, this skill should activate.
 
 See `references/sample-prompts.md` within the skill directory for sample prompts.
+
+This skill in particular is expected to be heavily used within other skills,
+so this skill can/ should be invoked indirectly through those too.
