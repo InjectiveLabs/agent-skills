@@ -20,21 +20,21 @@ This skill provides instructions on how to set up and use MCP servers that are i
 
 ## Activities
 
-## Set up and run Injective Documentation MCP Server
+### Set up and run Injective Documentation MCP Server
 
 Not applicable, as we provide a hosted MCP server for you.
 Simply connect to `https://docs.injective.network/mcp`,
 which exposes a streamable HTTP endpoint that most MCP clients are able to consume.
 
-## Use Injective Documentation MCP Server
+### Use Injective Documentation MCP Server
 
 Perform MCP tool calls:
 
-- `SearchInjectiveDocs`- Searches official Injective documentation. Returns results including citations.
+- `SearchInjectiveDocs` - Searches official Injective documentation. Returns results including citations.
 
 See: https://docs.injective.network/developers-ai/documentation-mcp.md
 
-## Set up and run Injective MCP Server
+### Set up and run Injective MCP Server
 
 Installation:
 
@@ -67,7 +67,7 @@ Edit `~/.claude/mcp.json` or the MCP configuration within your project to includ
 }
 ```
 
-## Use Injective MCP Server
+### Use Injective MCP Server
 
 Perform MCP tool calls:
 
@@ -104,5 +104,5 @@ This skill does not use or depend upon any other skill.
 
 ## Prerequisites
 
-Must have node.js v22 or higher.
+Must have Node.js v22 or higher.
 Check with `node -v`.
