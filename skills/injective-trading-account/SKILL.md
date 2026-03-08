@@ -92,7 +92,9 @@ account_balances(address: inj1..., denom: usdt)
 → check subaccountBalances[0].deposit.availableBalance
 ```
 
-If bank balance has USDT but subaccount doesn't: use `subaccount_deposit` to move funds in.
+If bank balance has USDT but subaccount doesn't:
+Use `subaccount_deposit` to move funds in.
+NOte that this is not a read/ query, and will involve a transaction.
 
 ### "Show my positions and P&L"
 
@@ -130,7 +132,7 @@ Advanced users can specify `subaccountId` explicitly on trade tools.
 
 This skill uses the following skills:
 
-- `injective-mcp-server`
+- `injective-mcp-servers`
 
 If these skills are not available, selectively run the following commands to install them:
 
