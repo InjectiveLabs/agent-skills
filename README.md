@@ -56,6 +56,19 @@ npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
 See [`skills/injective-mcp-servers`](./skills/injective-mcp-servers/README.md)
 for more information.
 
+## injective-trading-account
+
+Set up and use MCP servers that are important for Injective.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-trading-account
+```
+
+See [`skills/injective-trading-account`](./skills/injective-trading-account/README.md)
+for more information.
+
 ## injective-trading-tokens
 
 Look up metadata for any Injective token or denom. Resolves native tokens (INJ), Peggy ERC-20 bridged tokens (USDT, USDC, WETH), IBC assets (ATOM, OSMO), TokenFactory tokens, and EVM ERC-20s to their human-readable symbol, decimals, and type. Also supports sending tokens between addresses and depositing/withdrawing from trading subaccounts. Requires the Injective MCP server to be connected.
