@@ -9,14 +9,16 @@ Can you get me the details for token peggy0x...?
 Sample prompt 2:
 
 ```text
-Send 12.34 INJ to a friend, her address is 0x...
+Send 12.34 INJ to a friend, her address is inj1...
 ```
 
 Sample prompt 3:
 
 ```text
-Send 45.67 USDT to a friend, his address is inj1...
+Send 45.67 USDT to a friend, his address is 0x...
 ```
+
+Note that this will require the LLM to perform a conversion from EVM to bech32 format.
 
 Sample prompt 4:
 
