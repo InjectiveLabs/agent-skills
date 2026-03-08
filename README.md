@@ -63,7 +63,7 @@ Set up and use MCP servers that are important for Injective.
 Install via NPM:
 
 ```bash
-npx skills add InjectiveLabs/agent-skills --skill iinjective-trading-account
+npx skills add InjectiveLabs/agent-skills --skill injective-trading-account
 ```
 
 See [`skills/injective-trading-account`](./skills/injective-trading-account/README.md)
