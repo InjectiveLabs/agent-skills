@@ -175,11 +175,14 @@ These include:
     - `solidity-gas-optimization`
     - `solidity-adversarial-analysis`
 
-## Prerequisites
-
-If the "related skills" are not available, run the following command to install them:
+If these skills are not available, selectively run the following commands to install them:
 
 ```shell
 npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
 npx skills add whackur/solidity-agent-toolkit
 ```
+
+## Prerequisites
+
+- Either hardhat or foundry installed for smart contract development
+- Either viem or ethers.js for dApp development
