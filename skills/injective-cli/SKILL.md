@@ -7,7 +7,7 @@ metadata:
   version: "1.18.0"
 ---
 
-# Injective CLI Skill
+# Injective CLI, Skill Guide
 
 ## Overview
 

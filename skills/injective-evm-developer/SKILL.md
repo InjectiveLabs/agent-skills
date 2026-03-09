@@ -9,7 +9,7 @@ metadata:
   version: "0.0.0"
 ---
 
-# Injective EVM Developer Guide
+# Injective EVM Developer, Skill Guide
 
 Injective is a layer 1 blockchain that is simultaneously both EVM and Cosmos.
 Use this skill when building on Injective's EVM.
