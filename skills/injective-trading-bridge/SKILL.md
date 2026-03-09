@@ -30,7 +30,7 @@ Sample prompts: `./references/sample-prompts.md`
 
 See `./references/common-tokens.md` for common tokens.
 
-See `./references/common-networks.md` for common networkd.
+See `./references/common-networks.md` for common networks.
 
 ### Notes
 

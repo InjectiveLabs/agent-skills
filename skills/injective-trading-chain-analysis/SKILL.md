@@ -67,7 +67,7 @@ Key areas:
   - `MinPriceTickSize`, `MinQuantityTickSize`
   - `OracleType`, `OracleScaleFactor`
 
-### Analyse chain code
+### Analyze chain code
 
 1. **Read the Go source** from the user's local clone or fetch from GitHub (`InjectiveLabs/injective-core`)
 2. **Trace the execution path** from message handler → keeper → state changes

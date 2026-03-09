@@ -91,8 +91,6 @@ For large orders, use limit orders or split into multiple market orders to reduc
 
 ## Related skills
 
-TODO
-
 - `injective-mcp-servers`
 
 If these skills are not available, selectively run the following commands to install them:
