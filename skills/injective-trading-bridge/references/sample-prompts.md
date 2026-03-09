@@ -1,4 +1,4 @@
-# Sample prompts for the Injective Trading TODO skill
+# Sample prompts for the Injective Trading Bridge skill
 
 Sample prompt 1:
 

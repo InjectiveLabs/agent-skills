@@ -1,6 +1,6 @@
 # Key files in injective-core for the exchange module
 
-```
+```text
 x/exchange/
 ├── keeper/
 │   ├── derivative_liquidations.go    # Liquidation engine
