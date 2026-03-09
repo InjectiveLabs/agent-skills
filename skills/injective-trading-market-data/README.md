@@ -1,4 +1,4 @@
-# Injective Trading TODO skill
+# Injective Trading Market Data skill
 
 Read the [`SKILL.md`](./SKILL.md) file, as it is self-describing (as all skill files should be).
 Note that this skill conforms to the [Agent Skills specification](https://agentskills.io/specification).
@@ -8,13 +8,13 @@ Note that this skill conforms to the [Agent Skills specification](https://agents
 Install via NPM into current directory, for use in current project only:
 
 ```bash
-npx skills add InjectiveLabs/agent-skills --skill injective-trading-TODO
+npx skills add InjectiveLabs/agent-skills --skill injective-trading-market-data
 ```
 
 Install via NPM globally, for use in all projects:
 
 ```bash
-npx skills add InjectiveLabs/agent-skills --global --skill injective-trading-TODO
+npx skills add InjectiveLabs/agent-skills --global --skill injective-trading-market-data
 ```
 
 ## Usage

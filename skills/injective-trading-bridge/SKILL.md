@@ -12,7 +12,7 @@ metadata:
 
 Move tokens cross-chain to/from Injective using two bridge protocols:
 
-- **deBridge DLN** — fast (minutes), supports Arbitrum, Base, Ethereum, Polygon, BSC, Avalanche, Optimism
+- **deBridge DLN** - fast (minutes), supports Arbitrum, Base, Ethereum, Polygon, BSC, Avalanche, Optimism
 - **Peggy** - Injective's canonical Ethereum bridge (~30 min, decentralized)
 
 Always get a quote first (`bridge_debridge_quote` / `bridge_debridge_inbound_quote`), *before* executing.
