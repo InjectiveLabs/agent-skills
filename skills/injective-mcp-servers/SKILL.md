@@ -7,7 +7,7 @@ metadata:
   version: "0.0.0"
 ---
 
-# Injective MCP Servers Guide
+# Injective MCP Servers, Skill Guide
 
 Model-Context-Protocol (MCP) servers facilitate discovery and expose tools, intended to be called by LLMs.
 This skill provides instructions on how to set up and use MCP servers that are important for Injective.
