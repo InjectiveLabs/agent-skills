@@ -3,17 +3,17 @@
 Sample prompt 1:
 
 ```text
-TODO
+Use debridge to send 12.34 USDT from my injective account to 0x... account on base.
 ```
 
 Sample prompt 2:
 
 ```text
-TODO
+Use debridge to send 45.67 USDC from 0x... on polygon to my injective account.
 ```
 
 Sample prompt 3:
 
 ```text
-TODO
+Use peggy to send 89.01 USDT from my injective account to 0x... on ethereum.
 ```

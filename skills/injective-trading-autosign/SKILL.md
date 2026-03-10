@@ -18,7 +18,9 @@ It expires automatically. The user can revoke at any time.
 
 ## When to apply
 
-- TODO
+- When you wish to give another account permission to execute transactions on behalf of your account
+- When you wish to revoke this permission
+- When you wish to granularly limit the scope of these permission to specific transaction types
 
 Sample prompts: `./references/sample-prompts.md`
 

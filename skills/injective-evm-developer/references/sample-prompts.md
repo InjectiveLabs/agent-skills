@@ -28,7 +28,7 @@ This project currently deploys on Ethereum, with the smart contracts within `./b
 Sample prompt 2:
 
 ```text
-This project currently deploys on Ethereum, with the dApp code within `./front`. Please make the necessary changes such that the same dApp can continue working on both the existing Ethereum deployed smart contracts and  the freshly cross-deployed smart contracts on Injective Testnet or Mainnet.
+This project currently deploys on Ethereum, with the dApp code within `./front`. Please make the necessary changes such that the same dApp can continue working on both the existing Ethereum deployed smart contracts and the freshly cross-deployed smart contracts on Injective Testnet or Mainnet.
 ```
 
 ## For US-003

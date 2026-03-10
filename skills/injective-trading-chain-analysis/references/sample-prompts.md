@@ -3,17 +3,19 @@
 Sample prompt 1:
 
 ```text
-TODO
+Please ELI5 how Injective's exchange module works.
 ```
 
 Sample prompt 2:
 
 ```text
-TODO
+Can you perform an example calculation of how the funding rate is calculated?
+Explain each step please.
+Use specific values from the perp positions in my account.
 ```
 
 Sample prompt 3:
 
 ```text
-TODO
+Walk me through how the spot limit buy and sell orders are matched in the INJ/USDT market.
 ```
