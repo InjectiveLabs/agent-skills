@@ -51,6 +51,7 @@ All endpoints use Injective LCD REST API:
 ```
 GET /cosmos/staking/v1beta1/delegations/{delegator_addr}
 ```
+
 Returns all active delegations with validator address and shares.
 
 ### Query Delegation to Specific Validator
@@ -70,6 +71,7 @@ GET /cosmos/staking/v1beta1/delegators/{delegator_addr}/unbonding_delegations
 ```
 GET /cosmos/distribution/v1beta1/delegators/{delegator_addr}/rewards
 ```
+
 Returns pending (unclaimed) rewards per validator and total.
 
 ### Query Validators
@@ -91,6 +93,12 @@ GET /cosmos/staking/v1beta1/params
 ```
 Returns unbonding time, max validators, bond denom (inj).
 
+### Check pending rewards
+
+```
+GET "https://lcd.injective.network/cosmos/distribution/v1beta1/delegators/inj1.../rewards"
+```
+
 ### Check total staked INJ for a wallet
 
 ```bash
@@ -109,13 +117,9 @@ Use the archival node endpoints for historical queries:
 - LCD REST: `https://lcd.injective.network`
 - gRPC: `grpc.injective.network:443`
 
-Query validators first, then iterate delegations per validator. Note: pagination required (default limit 100).
-
-### Check pending rewards
-
-```bash
-curl -s "https://lcd.injective.network/cosmos/distribution/v1beta1/delegators/inj1.../rewards"
-```
+Query validators first.
+Then iterate delegations per validator.
+Note: Pagination required (default limit 100).
 
 ### Get delegations
 

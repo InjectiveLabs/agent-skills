@@ -100,6 +100,8 @@ bridge_debridge_inbound_send
   recipient: inj1...
 ```
 
+Note: You need to pay transaction fees on both networks.
+
 ### Bridge tokens from Injective to Ethereum using Peggy
 
 This method is slower, but also decentralized.

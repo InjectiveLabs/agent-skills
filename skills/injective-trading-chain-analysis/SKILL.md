@@ -16,7 +16,7 @@ and trace execution paths for derivatives trading features.
 
 ## When to apply
 
--
+- Understand how Injective's exchange module works under the hood
 
 Sample prompts: `./references/sample-prompts.md`
 
