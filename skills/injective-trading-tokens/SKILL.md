@@ -8,7 +8,7 @@ metadata:
   version: "0.0.0"
 ---
 
-# Injective Token Skill Guide
+# Injective Trading Tokens, Skill Guide
 
 Resolve, inspect, and move tokens on Injective.
 Supports all Injective denom formats and handles token transfers between wallets and subaccounts.

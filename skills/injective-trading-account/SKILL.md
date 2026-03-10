@@ -8,7 +8,7 @@ metadata:
   version: "0.0.0"
 ---
 
-# Injective Account Skill Guide
+# Injective Trading Account, Skill Guide
 
 Query balances and open positions for any Injective account.
 No transactions/ signatures required.
