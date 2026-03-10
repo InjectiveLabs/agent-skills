@@ -7,7 +7,7 @@ metadata:
   version: "0.0.0"
 ---
 
-# Injective MCP Servers Guide
+# Injective MCP Servers, Skill Guide
 
 Model-Context-Protocol (MCP) servers facilitate discovery and expose tools, intended to be called by LLMs.
 This skill provides instructions on how to set up and use MCP servers that are important for Injective.
@@ -73,7 +73,7 @@ Perform MCP tool calls:
 
 - `wallet_generate` - Generate a new Injective wallet. Returns address + mnemonic (shown once).
 - `wallet_import` - Import a wallet from a hex private key.
-- `wallet_list` - List all wallets in the local keystore (addresses only — no keys).
+- `wallet_list` - List all wallets in the local keystore (addresses only - no keys).
 - `wallet_remove` - Permanently delete a wallet from the keystore.
 - `market_list` - List all active perpetual futures markets.
 - `market_price` - Get the current oracle price for a market by symbol (e.g. `BTC`).

@@ -7,7 +7,7 @@ metadata:
   version: "1.9.1"
 ---
 
-# Linear CLI Skill
+# Linear CLI, Skill Guide
 
 ## Overview
 
