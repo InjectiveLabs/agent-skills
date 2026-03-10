@@ -44,7 +44,7 @@ diff -u references/injectived-cli-map.md /tmp/injectived-cli-map.new.md
 
 ## Account and Endpoint Conventions
 
-- Use `~/.injectived` as the home dir for config and key material, unless overriden by user.
+- Use `~/.injectived` as the home dir for config and key material, unless overridden by user.
 - Read endpoint and chain-id from `~/.injectived/config/client.toml` (fields: `node`, `chain-id`).
 - Use these defaults when configuring the client:
   - mainnet endpoint: `https://sentry.tm.injective.network:443`
