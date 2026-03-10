@@ -14,7 +14,7 @@ Help me to generate a new account (show me the private key, public key, and addr
 Sample prompt 2:
 
 ```
-Recommend a wallet that I can use with Injective EVM. Then guide me how to fund it with a larg amount of INJ on Testnet from a faucet (I need at least 2 INJ).
+Recommend a wallet that I can use with Injective EVM. Then guide me how to fund it with a large amount of INJ on Testnet from a faucet (I need at least 2 INJ).
 ```
 
 ## For US-002
@@ -28,7 +28,7 @@ This project currently deploys on Ethereum, with the smart contracts within `./b
 Sample prompt 2:
 
 ```text
-This project currently deploys on Ethereum, with the dApp code within `./front`. Please make the necessary changes such that the same dApp can cotninue working on both the existing Ethereum deployed smart contracts and  the freshly cross-deployed smart contracts on Injective Testnet or Mainnet.
+This project currently deploys on Ethereum, with the dApp code within `./front`. Please make the necessary changes such that the same dApp can continue working on both the existing Ethereum deployed smart contracts and  the freshly cross-deployed smart contracts on Injective Testnet or Mainnet.
 ```
 
 ## For US-003

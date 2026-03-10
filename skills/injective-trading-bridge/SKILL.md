@@ -102,7 +102,7 @@ bridge_debridge_inbound_send
 
 ### Bridge tokens from Injective to Ethereum using Peggy
 
-This method is slower, but also decentralised.
+This method is slower, but also decentralized.
 Expect to take ~30min.
 
 ```
