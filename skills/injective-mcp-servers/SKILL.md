@@ -39,7 +39,8 @@ See: https://docs.injective.network/developers-ai/documentation-mcp.md
 Installation:
 
 ```shell
-git clone https://github.com/InjectiveLabs/mcp-server injective-mcp-server && cd injective-mcp-server
+git clone https://github.com/InjectiveLabs/mcp-server injective-mcp-server
+cd injective-mcp-server
 npm install && npm run build
 ```
 
