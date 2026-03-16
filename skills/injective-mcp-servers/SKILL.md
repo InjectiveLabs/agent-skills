@@ -99,6 +99,40 @@ Perform MCP tool calls:
 
 See: https://raw.githubusercontent.com/InjectiveLabs/mcp-server/refs/heads/main/README.md
 
+## Known Gotchas
+
+Critical findings for anyone building on or extending the MCP server, or integrating with MetaMask.
+
+### EIP-712 Signing (MetaMask)
+
+- **Use V2, not V1.** V1 (`getEip712TypedData`) uses non-standard domain types (`verifyingContract: "cosmos"`, `salt: "0"` as strings). MetaMask's `eth_signTypedData_v4` silently produces invalid signatures with V1. Always use `getEip712TypedDataV2` + `SIGN_EIP712_V2`.
+- **Fee objects must match exactly.** `getEip712TypedDataV2()` and `createTransaction()` must receive the exact same fee object. If one uses the SDK default and the other a custom fee, the chain reconstructs different typed data → hash mismatch → signature verification failure.
+- **`evmChainId` can be any EVM chain.** Injective EIP-712 signing works regardless of which EVM chain MetaMask is connected to. Read chain ID from `eth_chainId` and pass to both the EIP-712 domain and `createWeb3Extension`.
+
+### SDK `fromJSON` Scaling
+
+- **`MsgCreateDerivativeMarketOrder.fromJSON` applies ×10^18 internally.** It expects values in chain units (price/margin already ×10^6 for USDT markets), then appends 18 decimal places for protobuf. Pass: `price = humanPrice × 10^6`, `margin = humanMargin × 10^6`, `quantity = humanQty` (not scaled by quote decimals).
+
+### Margin Calculation
+
+- **Add 1–2% buffer above exact minimum.** If `margin == price × qty × initialMarginRatio` exactly, the chain may reject due to rounding.
+- **Use `max(oraclePrice, markPrice)` for validation.** The chain validates margin against the higher of oracle and mark price. Margin calculated from oracle alone may be insufficient if mark > oracle.
+- **`stakeUsdt` is margin, not notional.** In web apps, the user's stake parameter is their margin. `qty = stake × leverage / price`, not `notional / price`.
+
+### Close Orders
+
+- **Use `margin: '0'` for reduce-only.** No separate `isReduceOnly` flag needed on Injective.
+- **Use 1% slippage for closes.** 5% slippage can trigger "order price surpasses bankruptcy price" for low-leverage positions.
+
+### Subaccount Deposits
+
+- **Bank balance ≠ exchange subaccount balance.** A `MsgDeposit` (or `subaccount_deposit` tool call) is required to move USDT from bank → subaccount before placing derivative orders. Always check subaccount balance and auto-deposit if needed.
+
+### Deployment (Express / Web Apps)
+
+- **Serve from the correct subdirectory.** If `server.js` serves from `dist/`, deploy built files to `dist/`, not the project root.
+- **Set no-cache headers on HTML.** Without `Cache-Control: no-cache, no-store, must-revalidate` on HTML responses, browsers serve stale JS bundles after deploys.
+
 ## Related skills
 
 This skill does not use or depend upon any other skill.

@@ -133,6 +133,14 @@ Note that the `client` object will be able to use both `client.readContract` and
   - As an MCP server with a search function: Use the `injective-mcp-servers` skill, with the "Injective Documentation MCP Server"
   - Fallback: Use the version for humans, in HTML from: https://docs.injective.network/developers-evm/
 
+### EIP-712 Signing (MetaMask / Web Apps)
+
+When building dApps that sign Injective transactions via MetaMask:
+
+- **Use EIP-712 V2 only.** V1 (`getEip712TypedData`) uses non-standard domain types that cause MetaMask to silently produce invalid signatures. Always use `getEip712TypedDataV2` + `SIGN_EIP712_V2`.
+- **Fee objects must be identical** in both `getEip712TypedDataV2()` and `createTransaction()`. A mismatch (e.g., SDK default vs custom fee) causes hash mismatch → signature verification failure on-chain.
+- **`evmChainId` is flexible.** Injective EIP-712 signing works regardless of which EVM chain MetaMask is connected to. Read from `eth_chainId` and pass to both the EIP-712 domain and `createWeb3Extension`.
+
 ### Troubleshooting common issues
 
 #### Convert between EVM and bech32 formats for addresses
