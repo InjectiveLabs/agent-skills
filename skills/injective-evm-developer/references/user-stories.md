@@ -15,7 +15,7 @@ Sample prompts for each of these user stories may be found in `./sample-prompts.
 (US-001)
 As a new developer;
 I need to set up a wallet and fund it with Testnet INJ;
-so that I can developer and deploy smart contracts on Injective Testnet.
+so that I can develop and deploy smart contracts on Injective Testnet.
 
 (US-002)
 As a developer with an existing application that works on another EVM blockchain;
