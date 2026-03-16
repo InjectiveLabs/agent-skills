@@ -94,7 +94,9 @@ account_balances(address: inj1..., denom: usdt)
 
 If bank balance has USDT but subaccount doesn't:
 Use `subaccount_deposit` to move funds in.
-NOte that this is not a read/ query, and will involve a transaction.
+Note that this is not a read/ query, and will involve a transaction.
+
+**Important:** Bank balance (wallet) ≠ exchange subaccount balance. Funds must be deposited to the exchange subaccount via `MsgDeposit` before placing derivative orders. Always check subaccount balance and auto-deposit if needed before trading.
 
 ### "Show my positions and P&L"
 
@@ -117,6 +119,14 @@ Injective, being a MultiVM blockchain, supports multiple categories of denoms.
 
 Denoms of different categories have different formats. See: `./references/denom-formats.md`
 Use `token_metadata` to resolve any denom to a human-readable symbol.
+
+## Margin Calculation
+
+When estimating required margin for a position:
+
+- **Add 1–2% buffer** above the exact minimum (`price × qty × initialMarginRatio`). The chain may reject orders at the exact minimum due to rounding.
+- **Use `max(oraclePrice, markPrice)`** for margin validation. The chain validates against the higher of the two. Margin calculated from oracle price alone may be insufficient if mark price is higher.
+- **`stakeUsdt` is margin, not notional.** The user's stake is their margin (collateral). `qty = stake × leverage / price`.
 
 ## Subaccount IDs
 
