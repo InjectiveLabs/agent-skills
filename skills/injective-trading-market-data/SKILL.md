@@ -27,6 +27,7 @@ Sample prompts: `./references/sample-prompts.md`
 - Oracle prices are aggregated from Band Protocol and Pyth Network feeds.
 - Funding rates are not yet exposed via MCP tools - check Helix UI for funding.
 - Market data is cached in-process for 30 seconds to reduce latency on repeated calls.
+- **`minPriceTickSize` from the indexer is in chain format.** For USDT markets, divide by 10^6 to get the human-readable tick size. `minQuantityTickSize` is already in human format (not scaled by quote decimals).
 
 ### Market symbols
 
