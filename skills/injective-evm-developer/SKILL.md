@@ -153,6 +153,22 @@ For gas price: Manually set a hardcoded value of 160 million (`160e6` in Javascr
 
 For gas amount, use the default mechanism: The `eth_estimateGas` RPC, which should be invoked when needed by ethers.js or viem.
 
+### Critical: inEVM is DEPRECATED
+
+Do NOT use `mainnet.rpc.inevm.com` or any inEVM endpoints. inEVM has been replaced by Injective EVM.
+
+| | Deprecated (inEVM) | Current (Injective EVM) |
+|---|---|---|
+| RPC | `mainnet.rpc.inevm.com` | `sentry.evm-rpc.injective.network/` |
+| Chain ID | 2525 | 1776 (`0x6f0`) |
+| Explorer | `explorer.inevm.com` | `blockscout.injective.network` |
+
+### EVM Transaction Quirks
+
+- **No EIP-1559**: Injective EVM does not support EIP-1559 (type 2) transactions. Always use `type: 0` (legacy) with explicit `gasPrice`.
+- **`eth_getTransactionReceipt` unreliable**: The EVM RPC sometimes returns internal errors on receipt queries. For non-critical operations (like faucet sends), fire-and-forget — don't call `tx.wait()`.
+- **Cosmos SDK `MsgBroadcasterWithPk` fails for fresh accounts**: The Cosmos ante handler panics with `invalid secp256k1 public key` when broadcasting from an account that has never sent a transaction. Use ethers.js + EVM RPC instead for programmatic sends from fresh wallets.
+
 ### All other FAQs
 
 See: https://docs.injective.network/developers-evm/evm-integrations-faq.md

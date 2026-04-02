@@ -126,6 +126,15 @@ If these skills are not available, selectively run the following commands to ins
 npx skills add InjectiveLabs/agent-skills --skill injective-mcp-servers
 ```
 
+## Browser-Based Bridge UX Notes
+
+When integrating deBridge DLN in a browser frontend:
+
+- **Arbitrum USDC → Injective USDT** is the most common path. Takes ~1-3 minutes.
+- **Balance doesn't auto-refresh** after bridging. Add an explicit refresh button next to the balance display, or poll the balance on a timer after bridge submission.
+- **Don't block on bridge confirmation** — show "Transaction submitted!" and let the user continue. The USDT arrives async.
+- **User needs ETH on Arbitrum** for gas. Make this clear in the UI before the bridge flow.
+
 ## Prerequisites
 
 - Injective MCP server must be running

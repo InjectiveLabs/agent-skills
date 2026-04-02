@@ -1,7 +1,7 @@
 ---
 name: injective-trading-autosign
 description: Set up AuthZ delegation on Injective for session-based auto-trading. Grants a scoped, time-limited permission to an ephemeral key so the AI can place and close perpetual trades without a wallet popup or password prompt for every order. Use authz_grant to enable, authz_revoke to disable. Requires the Injective MCP server to be connected.
-uses: ["injective-mcp-servers"]
+uses: ["injective-mcp-servers", "injective-faucet"]
 license: MIT
 metadata:
   author: ckhbtc
@@ -48,24 +48,98 @@ Sample prompts: `./references/sample-prompts.md`
 - Expiry is in seconds from time of grant. 86400 = 24h, 259200 = 72h.
 - If the grantee key is compromised, revoke immediately - the grant is limited to trading actions only, not withdrawals.
 
-## Browser-Based AutoSign (MetaMask + EIP-712)
+## Browser-Based AutoSign (MetaMask, Rabby, Keplr + EIP-712)
 
 When implementing AutoSign in a browser frontend (e.g. `autosign.ts` with `enableAutoSign`):
 
-evmChainId must come from MetaMask at grant time.
-The `evmChainId` stored in the AutoSign state must be the **actual MetaMask chain at the moment the grant tx is signed**, NOT a hardcoded value:
+### evmChainId — Read from Wallet, Never Hardcode
 
-Correct - read from MetaMask:
-```js
-const evmChainId = parseInt(
-  await window.ethereum.request({ method: 'eth_chainId' }), 16
-);
-```
+The `evmChainId` stored in the AutoSign state must be the **actual wallet chain at the moment the grant tx is signed**, NOT a hardcoded value:
 
-Wrong - hardcoding bypasses MetaMask's chain enforcement:
 ```js
+// Correct — read from wallet
+const evmChainId = parseInt(await window.ethereum.request({ method: 'eth_chainId' }), 16);
+// Wrong — hardcoding bypasses wallet chain enforcement
 const evmChainId = 1776;
 ```
+
+### Wallet Compatibility
+
+**Wallet connection**: Use `eth_requestAccounts` (respects default wallet provider). Do NOT use `wallet_requestPermissions` — it forces MetaMask even when Rabby is the default.
+
+```js
+// Good — respects Rabby, MetaMask, or whatever is default
+const accounts = await window.ethereum.request({ method: 'eth_requestAccounts' });
+// Bad — forces MetaMask account picker, ignores Rabby
+await window.ethereum.request({ method: 'wallet_requestPermissions', params: [{ eth_accounts: {} }] });
+```
+
+**Disconnect**: Use `wallet_revokePermissions` to clear cached accounts so next connect shows the wallet picker:
+```js
+await window.ethereum?.request({ method: 'wallet_revokePermissions', params: [{ eth_accounts: {} }] });
+```
+
+### Chain Switching (Rabby + MetaMask Compatible)
+
+Rabby throws different error codes than MetaMask on `wallet_switchEthereumChain`. Handle gracefully:
+
+```js
+try {
+  await window.ethereum.request({ method: 'wallet_switchEthereumChain', params: [{ chainId: '0x6f0' }] });
+} catch {
+  try {
+    await window.ethereum.request({
+      method: 'wallet_addEthereumChain',
+      params: [{
+        chainId: '0x6f0',
+        chainName: 'Injective',
+        nativeCurrency: { name: 'Injective', symbol: 'INJ', decimals: 18 },
+        rpcUrls: ['https://sentry.evm-rpc.injective.network/'],
+        blockExplorerUrls: ['https://blockscout.injective.network'],
+      }],
+    });
+  } catch { /* Rabby may reject but still be on the right chain */ }
+}
+// Always re-check — don't trust the switch/add result
+const recheckChain = await window.ethereum.request({ method: 'eth_chainId' });
+if (parseInt(recheckChain, 16) !== 1776) throw new Error('Switch to Injective (chain ID 1776)');
+```
+
+**IMPORTANT**: inEVM is DEPRECATED. Use `sentry.evm-rpc.injective.network/` (NOT `mainnet.rpc.inevm.com`). Block explorer: `blockscout.injective.network`.
+
+### Public Key Recovery for Fresh Accounts
+
+Fresh accounts have no on-chain public key. Using a zero-byte placeholder causes the chain to panic with `invalid secp256k1 public key`. Recover the real pubkey via `personal_sign`:
+
+```typescript
+import { ethers } from 'ethers'
+
+async function recoverPubKeyFromWallet(ethAddress: string): Promise<string> {
+  const msg = `Injective account verification: ${ethAddress}`
+  const sig = await window.ethereum.request({ method: 'personal_sign', params: [msg, ethAddress] });
+  const msgHash = ethers.hashMessage(msg)
+  const uncompressed = ethers.SigningKey.recoverPublicKey(msgHash, sig)
+  const compressed = ethers.SigningKey.computePublicKey(uncompressed, true)
+  return btoa(String.fromCharCode(...ethers.getBytes(compressed)))
+}
+
+// In createTransaction:
+const pubKey = onChainPubKey || await recoverPubKeyFromWallet(ethAddress)
+```
+
+### Block Height Caching Bug
+
+`ChainRestTendermintApi.fetchLatestBlock()` gets cached by browsers. Use raw fetch with cache-bust:
+
+```js
+const blockRes = await fetch(
+  `${endpoints.rest}/cosmos/base/tendermint/v1beta1/blocks/latest?_=${Date.now()}`,
+  { cache: 'no-store' }
+).then(r => r.json());
+const timeoutHeight = parseInt(blockRes.block.header.height, 10) + 200; // +200 blocks, not +20
+```
+
+**+20 blocks is too tight** — with faucet delays, chain switching, and wallet popups, use +200 minimum (~3 minutes of runway).
 
 ## Activities
 
