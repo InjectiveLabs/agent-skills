@@ -100,7 +100,13 @@ Anyone can submit step 4 — it doesn't have to be the original burner.
 
 ## Reference
 
-CCTP V2 contract addresses are **deterministic across all V2-enabled chains**:
+External docs:
+- [Injective USDC stablecoin overview](https://docs.injective.network/developers-defi/usdc-stablecoin) — chain-side USDC primer
+- [Injective USDC + CCTP tutorial](https://docs.injective.network/developers-defi/usdc-cctp-tutorial) — when bridge-kit support lands this is where the canonical end-to-end walkthrough will live
+- [Circle CCTP docs](https://developers.circle.com/cctp) — protocol authority
+- [Circle bridge-kit (npm)](https://www.npmjs.com/package/@circle-fin/bridge-kit) — higher-level SDK; doesn't include Injective configs yet, but a Circle-side PR is in progress (see `references/domains.md` → "Future: bridge-kit migration")
+
+CCTP V2 contract addresses are **deterministic across all V2-enabled chains** on mainnet:
 
 | Contract | Address |
 |---|---|
