@@ -13,6 +13,12 @@ Deterministic — same address on every V2-enabled EVM chain.
 | `TokenMinterV2` | `0xfd78EE919681417d192449715b2594ab58f5D002` |
 | `MessageV2` | `0xec546b6B005471ECf012e5aF77FBeC07e0FD8f78` |
 
+## Mainnet ↔ testnet share the same CCTP domain ID
+
+> *"If a mainnet is listed, its official testnet is also supported. For example, Ethereum includes both Ethereum Mainnet and Ethereum Sepolia."* — [Circle docs](https://developers.circle.com/cctp/cctp-supported-blockchains)
+
+Each network family has **one** CCTP domain id covering both its mainnet and testnet — the domain identifies the *chain family*, not the specific instance. The EVM chain id distinguishes mainnet from testnet at the JSON-RPC layer; the CCTP domain id is what `depositForBurn`'s `destinationDomain` arg uses to route the message. Concretely: Injective mainnet (chain id 1776) and Injective testnet (chain id 1439) both share **CCTP domain 29**. Same for Ethereum mainnet (1) and Sepolia (11155111) → both domain 0, etc.
+
 ## Per-chain values used by this skill
 
 | Chain | EVM chain id | CCTP domain | Native USDC |
