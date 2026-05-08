@@ -115,6 +115,6 @@ USDC on Injective EVM: `0xa00C59fF5a080D2b954d0c75e46E22a0c371235a` (Cosmos bank
 ## Constraints
 
 - **EVM only.** Solana CCTP uses a different SDK and is out of scope.
-- **Standard transfer only on Injective.** Injective is V2-enabled but doesn't support Fast Transfer per Circle's [supported-chains list](https://developers.circle.com/cctp/cctp-supported-blockchains). Source-chain Fast Transfer to/from chains other than Injective is supported but not exposed by this skill.
+- **Standard transfer only.** Injective doesn't *need* Fast Transfer — its ~600 ms block time and instant finality already beat what Fast Transfer offers on slower chains. Adding source-side Fast Transfer for Ethereum-origin deposits would help shave the ~13 min Ethereum-finality wait, and is a small change in `cctp.mjs` (lower `minFinalityThreshold`, non-zero `maxFee`, fee fetch from `/v2/burn/USDC/fees/{src}/{dst}`). See `references/domains.md` for the full rationale.
 - **One transfer at a time.** No queueing, no parallel runs against the same address (allowance race).
 - **Native USDC only.** Do not pass bridged USDC (`USDC.e`, `USDCnb`, etc.) — the source `usdc` address in `chains.mjs` is always Circle-issued native.

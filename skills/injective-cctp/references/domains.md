@@ -25,14 +25,24 @@ Deterministic — same address on every V2-enabled EVM chain.
 | Polygon | 137 | 7 | `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359` |
 | **Injective EVM** | **1776** | **29** | **`0xa00C59fF5a080D2b954d0c75e46E22a0c371235a`** |
 
-## Capabilities (per Circle's matrix)
+## Why Injective doesn't need Fast Transfer
+
+Circle's chain matrix lists Injective as **standard transfer only** — no Fast Transfer support. That's not a limitation; it's by design.
+
+CCTP Fast Transfer exists to shortcut the wait for source-chain finality. On Ethereum, finality takes ~13 minutes (two epochs), so Fast Transfer with a small fee + bonded attesters is genuinely faster. But on a chain with sub-second blocks and instant finality — Injective produces blocks in ~600ms with single-block finality — there's nothing to shortcut. **Standard transfer on Injective is already faster than Fast Transfer would be on, say, Ethereum.** Adding a paid-fee fast path would only introduce overhead.
+
+So when you read "Injective: standard only" on Circle's matrix, the right mental model isn't "missing feature" — it's "feature unnecessary, by virtue of the chain being fast enough already."
+
+For the other direction: **inbound from a slow chain into Injective**, the wait is on the *source* chain's finality, so Fast Transfer on the source side (e.g. Ethereum → Injective Fast) would help. The current CLI doesn't expose that — it always uses standard. Adding it is a small change in `cctp.mjs` (lower `minFinalityThreshold`, non-zero `maxFee`, plus a fee fetch from Circle's `/v2/burn/USDC/fees/{src}/{dst}` endpoint).
+
+## Capabilities matrix
 
 | Chain | Standard transfer | Fast transfer | Forwarding |
 |---|---|---|---|
 | Ethereum, Avalanche, OP, Arbitrum, Base, Polygon | ✓ | ✓ | ✓ |
-| Injective EVM | ✓ | — | — |
+| Injective EVM | ✓ | — (not needed; see above) | — |
 
-This skill only uses **standard transfer** so Fast/Forwarding are out of scope. Adding Fast for non-Injective routes is a small change in `cctp.mjs` (lower `minFinalityThreshold`, non-zero `maxFee`, plus a fee fetch from Circle's `/v2/burn/USDC/fees/{src}/{dst}` endpoint).
+This skill only uses **standard transfer**.
 
 ## Adding a new chain
 
