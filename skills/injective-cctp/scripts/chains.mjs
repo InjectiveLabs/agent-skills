@@ -132,6 +132,27 @@ export const CHAINS = {
   },
 };
 
+// ─── Testnet entries ──────────────────────────────────────────────────────────
+// Domain ids match mainnet (testnets share the family domain — per Circle:
+// "If a mainnet is listed, its official testnet is also supported."). Chain
+// ids and USDC contracts differ. V2 contract addresses on testnets are NOT
+// the same deterministic mainnet addresses — look them up at
+// https://developers.circle.com/cctp/references/contract-addresses before use.
+//
+// To enable a testnet, copy a mainnet entry, swap in: chain id, RPC, USDC
+// address, V2 contract addresses (separate testnet set), and add it under a
+// distinct key like `injective-testnet`. The CLI is chain-agnostic over CHAINS
+// so no other code changes are needed.
+//
+// Reference (from references/domains.md):
+//   ethereum-sepolia    chainId 11155111  domain 0
+//   avalanche-fuji      chainId 43113     domain 1
+//   optimism-sepolia    chainId 11155420  domain 2
+//   arbitrum-sepolia    chainId 421614    domain 3
+//   base-sepolia        chainId 84532     domain 6
+//   polygon-amoy        chainId 80002     domain 7
+//   injective-testnet   chainId 1439      domain 29
+
 // Build a viem-compatible chain object from one of the entries above.
 export function viemChain(c) {
   return {

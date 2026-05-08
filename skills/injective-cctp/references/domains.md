@@ -2,9 +2,9 @@
 
 These are the values the CLI's `chains.mjs` is built from. Source of truth: [developers.circle.com/cctp/cctp-supported-blockchains](https://developers.circle.com/cctp/cctp-supported-blockchains).
 
-## V2 contract addresses
+## V2 contract addresses (mainnet)
 
-Deterministic — same address on every V2-enabled EVM chain.
+Deterministic — same address on every V2-enabled EVM chain on mainnet.
 
 | Contract | Address |
 |---|---|
@@ -13,13 +13,17 @@ Deterministic — same address on every V2-enabled EVM chain.
 | `TokenMinterV2` | `0xfd78EE919681417d192449715b2594ab58f5D002` |
 | `MessageV2` | `0xec546b6B005471ECf012e5aF77FBeC07e0FD8f78` |
 
+## V2 contract addresses (testnet)
+
+Testnets use a **separate** set of V2 contract addresses (not the same deterministic ones as mainnet). Look these up at [developers.circle.com/cctp/references/contract-addresses](https://developers.circle.com/cctp/references/contract-addresses) before wiring up testnet runs — Circle updates them periodically and we don't want to ship stale ones here.
+
 ## Mainnet ↔ testnet share the same CCTP domain ID
 
 > *"If a mainnet is listed, its official testnet is also supported. For example, Ethereum includes both Ethereum Mainnet and Ethereum Sepolia."* — [Circle docs](https://developers.circle.com/cctp/cctp-supported-blockchains)
 
 Each network family has **one** CCTP domain id covering both its mainnet and testnet — the domain identifies the *chain family*, not the specific instance. The EVM chain id distinguishes mainnet from testnet at the JSON-RPC layer; the CCTP domain id is what `depositForBurn`'s `destinationDomain` arg uses to route the message. Concretely: Injective mainnet (chain id 1776) and Injective testnet (chain id 1439) both share **CCTP domain 29**. Same for Ethereum mainnet (1) and Sepolia (11155111) → both domain 0, etc.
 
-## Per-chain values used by this skill
+## Mainnet — chain reference
 
 | Chain | EVM chain id | CCTP domain | Native USDC |
 |---|---:|---:|---|
@@ -30,6 +34,22 @@ Each network family has **one** CCTP domain id covering both its mainnet and tes
 | Base | 8453 | 6 | `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913` |
 | Polygon | 137 | 7 | `0x3c499c542cEF5E3811e1192ce70d8cC03d5c3359` |
 | **Injective EVM** | **1776** | **29** | **`0xa00C59fF5a080D2b954d0c75e46E22a0c371235a`** |
+
+## Testnet — chain reference
+
+Domain ids match mainnet (same family). Chain ids are different. USDC contract addresses live at [developers.circle.com/cctp/references/usdc-contract-addresses](https://developers.circle.com/cctp/references/usdc-contract-addresses).
+
+| Chain | EVM chain id | CCTP domain |
+|---|---:|---:|
+| Ethereum Sepolia | 11155111 | 0 |
+| Avalanche Fuji | 43113 | 1 |
+| OP Sepolia | 11155420 | 2 |
+| Arbitrum Sepolia | 421614 | 3 |
+| Base Sepolia | 84532 | 6 |
+| Polygon Amoy | 80002 | 7 |
+| **Injective EVM testnet** | **1439** | **29** |
+
+The CLI's `chains.mjs` ships mainnet entries only. To add testnet support, copy a mainnet entry, swap in the testnet chain id + RPC + USDC address + V2 contract addresses, and pick a key like `injective-testnet`.
 
 ## Why Injective doesn't need Fast Transfer
 
@@ -63,7 +83,7 @@ chainKey: {
   explorer: 'https://...',
   nativeCurrency: { name, symbol, decimals: 18 },
   usdc: '<native USDC contract>',
-  cctp: CCTP_V2,                  // always — V2 contracts are deterministic
+  cctp: CCTP_V2,                  // mainnet — use TESTNET_V2 for testnets
   finalityHint: '~N min',
 }
 ```
