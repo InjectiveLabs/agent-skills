@@ -92,4 +92,8 @@ No code changes needed beyond that — the CLI and renderers are chain-agnostic 
 
 ## Why chain ID ≠ domain ID
 
-Circle's CCTP domains pre-date most L2s and use a separate, smaller integer space (currently 0-29). They have no relationship to EIP-155 chain IDs. The CLI never confuses them because each chain entry stores both fields explicitly — `id` is for viem's chain config (and EIP-712 signing), `domain` is for `depositForBurn`'s `destinationDomain` arg.
+Circle's CCTP domains pre-date most L2s and use a separate, smaller integer space (currently 0–29). They have no relationship to EIP-155 chain ids. The CLI never confuses them because each chain entry stores both fields explicitly — `id` is for viem's chain config (and EIP-712 signing), `domain` is for `depositForBurn`'s `destinationDomain` arg.
+
+## Future: bridge-kit migration
+
+Circle ships a higher-level SDK at [@circle-fin/bridge-kit](https://www.npmjs.com/package/@circle-fin/bridge-kit) that wraps the CCTP V2 flow. As of this writing it doesn't include Injective configurations yet — Circle DevRel ([@huijing](https://github.com/huijing)) has confirmed an Injective-support PR is in progress. When that lands, this CLI's burn/poll/mint flow can be replaced with bridge-kit calls and most of `cctp.mjs` + `chains.mjs` becomes thin wiring. Track progress at [docs.injective.network/developers-defi/usdc-cctp-tutorial](https://docs.injective.network/developers-defi/usdc-cctp-tutorial).

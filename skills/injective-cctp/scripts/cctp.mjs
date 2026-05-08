@@ -6,6 +6,12 @@
 //   node cctp.mjs --from ethereum --amount 100                   # → Injective
 //   node cctp.mjs --from injective --to base --amount 50         # ← from Injective
 //   node cctp.mjs --resume 0x<burnTxHash> --from arbitrum        # finish stuck transfer
+//
+// FUTURE: when @circle-fin/bridge-kit (https://www.npmjs.com/package/@circle-fin/bridge-kit)
+// adds Injective configurations, the burn / poll / mint stages below collapse
+// into a few SDK calls. Tracked in references/domains.md → "Future: bridge-kit
+// migration". Until then this CLI implements the V2 flow directly so it can
+// run today.
 
 import {
   createPublicClient,
