@@ -1,0 +1,16 @@
+{
+  "name": "injective-cctp-cli",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "Headless CCTP V2 transfer CLI for moving native USDC to/from Injective EVM.",
+  "bin": {
+    "injective-cctp": "./cctp.mjs"
+  },
+  "scripts": {
+    "start": "node cctp.mjs"
+  },
+  "dependencies": {
+    "viem": "^2.21.0"
+  }
+}
