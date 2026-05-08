@@ -221,36 +221,99 @@ async function burn({ srcPub, srcWal, src, dst, amount, mintRecipient }) {
 }
 
 // ─── Stage 4: poll Circle's attestation API ───────────────────────────────────
+//
+// Each iteration falls into exactly one of:
+//   • complete                 → return the attestation, exit the loop
+//   • pending (200, no msg yet OR status:pending_confirmations OR PENDING attestation)
+//                              → re-poll silently, log only when status changes
+//   • transient (404 / 5xx)    → log once with status code, re-poll
+//   • throttled (429)          → log + back off
+//   • network error            → log the error message, re-poll
+//   • timeout (>30 min)        → throw
+//
+// The previous version wrapped everything in a single try/catch that swallowed
+// non-2xx responses and network failures alike, so a 30-min stalled poll could
+// produce zero output. Now each path is logged distinctly.
 async function pollAttestation(srcDomain, txHash) {
   const url = `${ATTESTATION_API}/v2/messages/${srcDomain}?transactionHash=${txHash}`;
-  const start = Date.now();
-  const timeoutMs = 30 * 60 * 1000;
-  let lastStatus = null;
-
   log(`polling ${url}`);
+
+  const start = Date.now();
+  const TIMEOUT_MS = 30 * 60 * 1000;
+  const POLL_MS = 5_000;
+  const BACKOFF_MS = 30_000;
+  let lastStatus = null;
+  let backoffUntil = 0;
+
   while (true) {
     const elapsed = Date.now() - start;
+    if (elapsed > TIMEOUT_MS) {
+      throw new Error(`attestation timed out after ${(TIMEOUT_MS / 60000).toFixed(0)} minutes`);
+    }
+
+    if (Date.now() < backoffUntil) {
+      await sleep(backoffUntil - Date.now());
+      continue;
+    }
+
+    let res;
     try {
-      const res = await fetch(url);
-      if (res.ok) {
-        const data = await res.json();
-        const msg = data.messages?.[0];
-        const status = msg?.status || null;
-        if (status !== lastStatus) {
-          log(`  attestation status: ${status || 'no message yet'} (${(elapsed / 1000).toFixed(0)}s elapsed)`);
-          lastStatus = status;
-        }
-        if (msg && status === 'complete' && msg.attestation && msg.attestation !== 'PENDING') {
-          return { message: msg.message, attestation: msg.attestation };
-        }
-      }
+      res = await fetch(url);
     } catch (e) {
-      // network blip — retry
+      // Network-level failure (DNS, connection refused, etc.) — distinct from
+      // an HTTP error. Log and retry on the same poll cadence.
+      warn(`network error after ${(elapsed / 1000).toFixed(0)}s: ${e.message} — retrying in ${POLL_MS / 1000}s`);
+      await sleep(POLL_MS);
+      continue;
     }
-    if (elapsed > timeoutMs) {
-      throw new Error('attestation timed out after 30 minutes');
+
+    if (res.status === 429) {
+      warn(`rate-limited (429) after ${(elapsed / 1000).toFixed(0)}s — backing off ${BACKOFF_MS / 1000}s`);
+      backoffUntil = Date.now() + BACKOFF_MS;
+      continue;
     }
-    await sleep(5000);
+    if (res.status === 404) {
+      // 404 is normal for the first poll or two — Circle hasn't observed the
+      // tx yet. Only log once per status transition.
+      if (lastStatus !== '404') {
+        log(`  no message yet (${(elapsed / 1000).toFixed(0)}s elapsed) — Circle hasn't seen the burn yet, will keep polling`);
+        lastStatus = '404';
+      }
+      await sleep(POLL_MS);
+      continue;
+    }
+    if (res.status >= 500) {
+      warn(`Circle API ${res.status} after ${(elapsed / 1000).toFixed(0)}s — retrying in ${POLL_MS / 1000}s`);
+      await sleep(POLL_MS);
+      continue;
+    }
+    if (!res.ok) {
+      warn(`unexpected ${res.status} ${res.statusText} after ${(elapsed / 1000).toFixed(0)}s — retrying`);
+      await sleep(POLL_MS);
+      continue;
+    }
+
+    let data;
+    try {
+      data = await res.json();
+    } catch (e) {
+      warn(`malformed JSON from Circle: ${e.message} — retrying`);
+      await sleep(POLL_MS);
+      continue;
+    }
+
+    const msg = data?.messages?.[0];
+    const status = msg?.status || 'no_message';
+
+    if (status !== lastStatus) {
+      log(`  attestation status: ${status} (${(elapsed / 1000).toFixed(0)}s elapsed)`);
+      lastStatus = status;
+    }
+
+    if (msg && status === 'complete' && msg.attestation && msg.attestation !== 'PENDING') {
+      return { message: msg.message, attestation: msg.attestation };
+    }
+    await sleep(POLL_MS);
   }
 }
 
