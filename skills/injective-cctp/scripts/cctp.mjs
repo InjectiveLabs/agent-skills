@@ -40,6 +40,29 @@ import {
   ERC20_ABI,
 } from './abis.mjs';
 
+// ─── Logging ──────────────────────────────────────────────────────────────────
+const log  = (...a) => console.log('[cctp]', ...a);
+const warn = (...a) => console.warn('[cctp]', ...a);
+const err  = (...a) => console.error('[cctp]', ...a);
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+function publicClient(chain) {
+  return createPublicClient({
+    chain: viemChain(chain),
+    transport: fallback(chain.rpcs.map((url) => http(url, { timeout: 8000 }))),
+  });
+}
+
+function walletClient(chain, account) {
+  return createWalletClient({
+    account,
+    chain: viemChain(chain),
+    transport: fallback(chain.rpcs.map((url) => http(url, { timeout: 12_000 }))),
+  });
+}
+
 // ─── Args ─────────────────────────────────────────────────────────────────────
 function parseArgs(argv) {
   const out = { positional: [] };
@@ -88,39 +111,116 @@ EXAMPLES
   CCTP_PRIVATE_KEY=0xabc... node cctp.mjs --resume 0xdead... --from ethereum
 
 NOTES
-  • Standard CCTP V2 transfer only — Injective does not support Fast Transfer.
-    Ethereum→anywhere takes ~13 min for finality; L2s/Polygon/Avalanche are ~1 min.
+  • Standard CCTP V2 transfer only — Injective doesn't need Fast Transfer
+    (~600ms blocks, instant finality). See references/domains.md.
   • Anyone can submit the destination receiveMessage — if your tab/process dies
     after the burn, just re-run with --resume <burnTxHash> and the script will
     skip ahead to the attestation poll + mint.
 `);
 }
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
-const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
-const log = (...a) => console.log('[cctp]', ...a);
-const warn = (...a) => console.warn('[cctp]', ...a);
-const err  = (...a) => console.error('[cctp]', ...a);
+// ─── Stage 1: parse + validate ────────────────────────────────────────────────
+function setUp(argv) {
+  const args = parseArgs(argv);
+  if (args.help || args.h) { help(); process.exit(0); }
 
-function publicClient(chain) {
-  return createPublicClient({
-    chain: viemChain(chain),
-    transport: fallback(chain.rpcs.map((url) => http(url, { timeout: 8000 }))),
-  });
-}
+  const pk = process.env.CCTP_PRIVATE_KEY;
+  if (!pk) throw new Error('CCTP_PRIVATE_KEY env var is required');
+  if (!pk.startsWith('0x')) throw new Error('CCTP_PRIVATE_KEY must be 0x-prefixed');
+  const account = privateKeyToAccount(pk);
 
-function walletClient(chain, account) {
-  return createWalletClient({
+  const fromKey = (args.from || '').toLowerCase();
+  if (!fromKey || !CHAINS[fromKey]) {
+    throw new Error(`--from must be one of: ${Object.keys(CHAINS).join(', ')}`);
+  }
+  const src = CHAINS[fromKey];
+
+  let toKey = (args.to || '').toLowerCase();
+  if (!toKey) toKey = fromKey === 'injective' ? '' : 'injective';
+  if (!toKey || !CHAINS[toKey]) {
+    throw new Error(`--to must be one of: ${Object.keys(CHAINS).join(', ')}`);
+  }
+  if (fromKey === toKey) throw new Error('--from and --to must differ');
+  if (fromKey !== 'injective' && toKey !== 'injective') {
+    throw new Error('one side must be "injective" — this skill only handles Injective ↔ EVM transfers');
+  }
+  const dst = CHAINS[toKey];
+
+  const recipientArg = (args.recipient || '').trim() || account.address;
+  if (!isAddress(recipientArg)) throw new Error(`invalid --recipient: ${recipientArg}`);
+  const recipient = getAddress(recipientArg);
+  const mintRecipient = pad(recipient, { size: 32 });
+
+  let amount = null;
+  if (!args.resume) {
+    const amountArg = String(args.amount || '');
+    if (!amountArg) throw new Error('--amount is required (or use --resume)');
+    try {
+      amount = parseUnits(amountArg, 6);
+    } catch {
+      throw new Error(`invalid --amount: ${amountArg}`);
+    }
+    if (amount === 0n) throw new Error('--amount must be > 0');
+  }
+
+  return {
     account,
-    chain: viemChain(chain),
-    transport: fallback(chain.rpcs.map((url) => http(url, { timeout: 12_000 }))),
+    src,
+    dst,
+    amount,
+    recipient,
+    mintRecipient,
+    resumeBurnHash: args.resume || null,
+  };
+}
+
+// ─── Stage 2: approve (skipped if allowance is sufficient) ────────────────────
+async function approveIfNeeded({ srcPub, srcWal, src, account, amount }) {
+  const allowance = await srcPub.readContract({
+    address: src.usdc,
+    abi: ERC20_ABI,
+    functionName: 'allowance',
+    args: [account.address, src.cctp.tokenMessenger],
   });
+  log(`allowance: ${formatUnits(allowance, 6)} USDC ${allowance >= amount ? '(sufficient — skipping approve)' : '(short — approving)'}`);
+  if (allowance >= amount) return null;
+
+  const approveHash = await srcWal.writeContract({
+    address: src.usdc,
+    abi: ERC20_ABI,
+    functionName: 'approve',
+    args: [src.cctp.tokenMessenger, amount],
+  });
+  log(`approve tx: ${approveHash} → ${src.explorer}/tx/${approveHash}`);
+  await srcPub.waitForTransactionReceipt({ hash: approveHash });
+  log('approve confirmed');
+  return approveHash;
 }
 
-function shortHash(h) {
-  return h ? h.slice(0, 10) + '…' + h.slice(-6) : '';
+// ─── Stage 3: burn on the source chain ────────────────────────────────────────
+async function burn({ srcPub, srcWal, src, dst, amount, mintRecipient }) {
+  log(`calling depositForBurn on ${src.name}…`);
+  const burnHash = await srcWal.writeContract({
+    address: src.cctp.tokenMessenger,
+    abi: TOKEN_MESSENGER_V2_ABI,
+    functionName: 'depositForBurn',
+    args: [
+      amount,
+      dst.domain,
+      mintRecipient,
+      src.usdc,
+      ZERO_BYTES32,
+      STANDARD_MAX_FEE,
+      STANDARD_FINALITY,
+    ],
+  });
+  log(`burn tx: ${burnHash} → ${src.explorer}/tx/${burnHash}`);
+  await srcPub.waitForTransactionReceipt({ hash: burnHash });
+  log('burn confirmed');
+  return burnHash;
 }
 
+// ─── Stage 4: poll Circle's attestation API ───────────────────────────────────
 async function pollAttestation(srcDomain, txHash) {
   const url = `${ATTESTATION_API}/v2/messages/${srcDomain}?transactionHash=${txHash}`;
   const start = Date.now();
@@ -154,118 +254,8 @@ async function pollAttestation(srcDomain, txHash) {
   }
 }
 
-// ─── Main ─────────────────────────────────────────────────────────────────────
-async function main() {
-  const args = parseArgs(process.argv.slice(2));
-  if (args.help || args.h) { help(); process.exit(0); }
-
-  const pk = process.env.CCTP_PRIVATE_KEY;
-  if (!pk) { err('CCTP_PRIVATE_KEY env var is required'); process.exit(1); }
-  if (!pk.startsWith('0x')) { err('CCTP_PRIVATE_KEY must be 0x-prefixed'); process.exit(1); }
-  const account = privateKeyToAccount(pk);
-  log(`signer: ${account.address}`);
-
-  const fromKey = (args.from || '').toLowerCase();
-  if (!fromKey || !CHAINS[fromKey]) {
-    err(`--from must be one of: ${Object.keys(CHAINS).join(', ')}`);
-    process.exit(1);
-  }
-  const src = CHAINS[fromKey];
-
-  // Default the destination: if source is Injective, --to is required.
-  // Otherwise default to Injective.
-  let toKey = (args.to || '').toLowerCase();
-  if (!toKey) toKey = fromKey === 'injective' ? '' : 'injective';
-  if (!toKey || !CHAINS[toKey]) {
-    err(`--to must be one of: ${Object.keys(CHAINS).join(', ')}`);
-    process.exit(1);
-  }
-  if (fromKey === toKey) { err('--from and --to must differ'); process.exit(1); }
-  if (fromKey !== 'injective' && toKey !== 'injective') {
-    err('one side must be "injective" — this skill only handles Injective ↔ EVM transfers');
-    process.exit(1);
-  }
-  const dst = CHAINS[toKey];
-
-  const recipientArg = (args.recipient || '').trim() || account.address;
-  if (!isAddress(recipientArg)) { err(`invalid --recipient: ${recipientArg}`); process.exit(1); }
-  const recipient = getAddress(recipientArg);
-  const mintRecipient = pad(recipient, { size: 32 });
-
-  const srcPub = publicClient(src);
-  const dstPub = publicClient(dst);
-  const srcWal = walletClient(src, account);
-  const dstWal = walletClient(dst, account);
-
-  log(`route: ${src.name} (domain ${src.domain}) → ${dst.name} (domain ${dst.domain})`);
-  log(`recipient: ${recipient}`);
-
-  let burnHash = args.resume || null;
-
-  if (!burnHash) {
-    // ── 1. Validate amount ─────────────────────────────────────────────────────
-    const amountArg = String(args.amount || '');
-    if (!amountArg) { err('--amount is required (or use --resume)'); process.exit(1); }
-    let amount;
-    try {
-      amount = parseUnits(amountArg, 6);
-    } catch (e) {
-      err(`invalid --amount: ${amountArg}`);
-      process.exit(1);
-    }
-    if (amount === 0n) { err('--amount must be > 0'); process.exit(1); }
-    log(`amount: ${formatUnits(amount, 6)} USDC`);
-
-    // ── 2. Allowance check + approve if needed ─────────────────────────────────
-    const allowance = await srcPub.readContract({
-      address: src.usdc,
-      abi: ERC20_ABI,
-      functionName: 'allowance',
-      args: [account.address, src.cctp.tokenMessenger],
-    });
-    log(`allowance: ${formatUnits(allowance, 6)} USDC ${allowance >= amount ? '(sufficient)' : '(short — approving)'}`);
-
-    if (allowance < amount) {
-      const approveHash = await srcWal.writeContract({
-        address: src.usdc,
-        abi: ERC20_ABI,
-        functionName: 'approve',
-        args: [src.cctp.tokenMessenger, amount],
-      });
-      log(`approve tx: ${approveHash} → ${src.explorer}/tx/${approveHash}`);
-      await srcPub.waitForTransactionReceipt({ hash: approveHash });
-      log(`approve confirmed`);
-    }
-
-    // ── 3. Burn ────────────────────────────────────────────────────────────────
-    log(`calling depositForBurn on ${src.name}…`);
-    burnHash = await srcWal.writeContract({
-      address: src.cctp.tokenMessenger,
-      abi: TOKEN_MESSENGER_V2_ABI,
-      functionName: 'depositForBurn',
-      args: [
-        amount,
-        dst.domain,
-        mintRecipient,
-        src.usdc,
-        ZERO_BYTES32,
-        STANDARD_MAX_FEE,
-        STANDARD_FINALITY,
-      ],
-    });
-    log(`burn tx: ${burnHash} → ${src.explorer}/tx/${burnHash}`);
-    await srcPub.waitForTransactionReceipt({ hash: burnHash });
-    log(`burn confirmed`);
-  } else {
-    log(`resuming from existing burn tx: ${burnHash}`);
-  }
-
-  // ── 4. Attest ────────────────────────────────────────────────────────────────
-  log(`waiting for Circle attestation (${src.finalityHint})…`);
-  const { message, attestation } = await pollAttestation(src.domain, burnHash);
-  log(`attestation received`);
-
-  // ── 5. Mint ──────────────────────────────────────────────────────────────────
+// ─── Stage 5: mint on the destination chain ───────────────────────────────────
+async function mint({ dstPub, dstWal, dst, message, attestation, recipient }) {
   log(`calling receiveMessage on ${dst.name}…`);
   const mintHash = await dstWal.writeContract({
     address: dst.cctp.messageTransmitter,
@@ -276,7 +266,37 @@ async function main() {
   log(`mint tx: ${mintHash} → ${dst.explorer}/tx/${mintHash}`);
   await dstPub.waitForTransactionReceipt({ hash: mintHash });
   log(`mint confirmed — USDC now on ${dst.name} at ${recipient}`);
+  return mintHash;
+}
 
+// ─── Main orchestration ───────────────────────────────────────────────────────
+async function main() {
+  const ctx = setUp(process.argv.slice(2));
+  const { account, src, dst, amount, recipient, mintRecipient, resumeBurnHash } = ctx;
+
+  log(`signer: ${account.address}`);
+  log(`route: ${src.name} (domain ${src.domain}) → ${dst.name} (domain ${dst.domain})`);
+  log(`recipient: ${recipient}`);
+
+  const srcPub = publicClient(src);
+  const dstPub = publicClient(dst);
+  const srcWal = walletClient(src, account);
+  const dstWal = walletClient(dst, account);
+
+  let burnHash = resumeBurnHash;
+  if (!burnHash) {
+    log(`amount: ${formatUnits(amount, 6)} USDC`);
+    await approveIfNeeded({ srcPub, srcWal, src, account, amount });
+    burnHash = await burn({ srcPub, srcWal, src, dst, amount, mintRecipient });
+  } else {
+    log(`resuming from existing burn tx: ${burnHash}`);
+  }
+
+  log(`waiting for Circle attestation (${src.finalityHint})…`);
+  const { message, attestation } = await pollAttestation(src.domain, burnHash);
+  log('attestation received');
+
+  const mintHash = await mint({ dstPub, dstWal, dst, message, attestation, recipient });
   return { burnHash, mintHash };
 }
 
