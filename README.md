@@ -43,6 +43,20 @@ npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
 See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md)
 for more information.
 
+## injective-frontend-wallet
+
+Build, review, or debug browser frontends that sign and broadcast Injective transactions with Keplr, Leap, MetaMask, CosmJS, @injectivelabs/sdk-ts, or CosmWasm execute messages.
+Use it for Injective React/Vite/Next apps, wallet connect flows, swap-contract UIs, `MsgExecuteContract`, or errors mentioning `EthAccount`, `ethsecp256k1`, invalid pubkeys, account sequence, signer address, Keplr, Leap, or browser wallet signing.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-frontend-wallet
+```
+
+See [`skills/injective-frontend-wallet`](./skills/injective-frontend-wallet/README.md)
+for more information.
+
 ## injective-mcp-servers
 
 Set up and use MCP servers that are important for Injective.
