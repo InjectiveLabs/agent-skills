@@ -23,41 +23,54 @@ This skill is to assist authors working on Injective's developer documentation.
 
 ## Activities
 
-Perform the sequence from the "devrel-docs-style" skill, with some modifications as indicated.
+- Always run: "Check documentation style"
+- Only run if explicitly requested: "Verify technical correctness"
 
-### 1 - Identify which files should be checked
+### 1 - Check documentation style
 
-Invoke "identify which files should be checked" from "devrel-docs-style" skill.
+Invoke the "devrel-docs-style" skill, and specify use of American English.
 
-### 2 - Review for voice and tone
+### 2 - Verify technical correctness
 
-Invoke "Review for voice and tone" from "devrel-docs-style" skill.
+Invoke the "injective-mcp-servers" skill, and connect to the Injective Documentation MCP server.
 
-### 3 - Grammar and spelling
+Use this to validate technical correctness of all pages that were checked in the previous step "Check documentation style".
+Do so by:
 
-Replace the "British English" rule with:
-- American English - Use -ize/-yze verbs, -or nouns, -ense nouns, -og nouns (organize, color, license, dialog).
+- Make a list of claims, based on the contents of the files
+  - Identify any new claims made
+  - Identify any existing claims modified or removed
+- For each claim, based on the Injective Documentation MCP server.
+  - Find supporting evidence
+  - Find contradicting evidence
 
-The invoke "grammar and spelling" from "devrel-docs-style" skill.
+Based on this, create a list of all the claims, for each claim:
+- short description: 6 to 12 words
+- quote: text of each claim made, verbatim, as found in file
+- location: file path relative to project dir, and a single line number or range of line numbers, e.g. `./foo/bar.md:123-125`
+- likelihood of correctness:
+  - at least 80% sure claim is correct -> "Likely correct"
+  - less than 80% sure claim is correct -> "Maybe correct"
+  - less than 80% sure claim is wrong -> "Maybe wrong"
+  - at least 80% sure claim is wrong -> "Likely wrong"
+- rationale: reason for chosen likelihood of correctness
 
-### 4 - Formatting
+Use format: `./assets/claims-template.md`
 
-The invoke "formatting" from "devrel-docs-style" skill.
+### 3 - Assemble report
 
-### 5 - Word choice
-
-The invoke "word choice" from "devrel-docs-style" skill.
-
-### 6 - Compile a report
-
-The invoke "compile a report" from "devrel-docs-style" skill.
+- Start with the report file output in the "Check documentation style" step
+- Append the result from the "Verify technical correctness" step
+  - The "## Claims" section should be inserted right above the "## Reproducing this report" section
+- Write file to disk with the same filename
 
 ## Related skills
 
 - `devrel-docs-style`
 - `injective-mcp-servers`
 
-Use the `devrel-docs-style` skill to connect to the Injective Documentation MCP.
+Use the `injective-mcp-servers` skill to connect to the Injective Documentation MCP.
+
 Through this you may search/ consult existing Injective developer documentation.
 Use this to check for correctness of any technical terminology that is Injective-specific.
 
