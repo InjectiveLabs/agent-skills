@@ -43,6 +43,23 @@ npx skills add InjectiveLabs/agent-skills --skill injective-evm-developer
 See [`skills/injective-evm-developer`](./skills/injective-evm-developer/README.md)
 for more information.
 
+## injective-rfq-integrations
+
+Integrate Injective RFQ taker flows into browser apps and operational quote
+monitors. Covers RFQ gateway autosign settlement, Web3Gateway AuthZ setup,
+manual TakerStream quote collection, RFQ open/close flows, conditional TP/SL
+intents, quote uptime probes, market discovery, quote-hit diagnostics, and
+mainnet RFQ production gotchas.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-rfq-integrations
+```
+
+See [`skills/injective-rfq-integrations`](./skills/injective-rfq-integrations/README.md)
+for more information.
+
 ## injective-mcp-servers
 
 Set up and use MCP servers that are important for Injective.
