@@ -10,7 +10,7 @@ does not accept them on-chain.
 - Environment: `mainnet`
 - Cosmos chain ID: `injective-1`
 - EIP-712 / EVM chain ID: `1776`
-- RFQ contract: `inj1tkkj6vqdcmhhet6ja7rag77yqtuf3tyx9s4hfs`
+- RFQ contract: `inj12stwq95jet57edcu4a65r48r46s9rzrs938n8k`
 - TakerStream: `wss://rfq.ws.injective.network/injective_rfq_rpc.InjectiveRfqRPC/TakerStream`
 - Gateway: `https://rfq.gateway.grpc-web.injective.network/`
 - Quote collection window: `500 ms` by default, but use milliseconds in config

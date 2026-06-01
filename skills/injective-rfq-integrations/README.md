@@ -86,7 +86,7 @@ ACKs and quotes in the browser.
 
 ```ts
 // Canonical mainnet RFQ contract.
-export const RFQ_CONTRACT_ADDRESS = 'inj1tkkj6vqdcmhhet6ja7rag77yqtuf3tyx9s4hfs'
+export const RFQ_CONTRACT_ADDRESS = 'inj12stwq95jet57edcu4a65r48r46s9rzrs938n8k'
 
 export const RFQ_WS_URL = 'wss://rfq.ws.injective.network'
 export const RFQ_GATEWAY_URL = 'https://rfq.gateway.grpc-web.injective.network/'
