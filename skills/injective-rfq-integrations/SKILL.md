@@ -191,52 +191,6 @@ Grant two groups:
 
 If setup asks users to pay gas, the integration is bypassing Web3Gateway.
 
-## Browser USDC Payments
-
-For browser USDC deposits, credits, fees, or other app-payment flows on
-Injective EVM, do not ask MetaMask to send a direct ERC-20 transfer from the
-user. Direct `USDC.transfer` calls make the user pay native INJ gas and can
-show MetaMask's confusing `Sending Unknown` / fee-warning screen.
-
-Prefer Circle USDC's EIP-3009 flow:
-
-1. Build typed data for `TransferWithAuthorization`.
-2. Ask the user to sign it with `eth_signTypedData_v4`.
-3. Submit `transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)`
-   from a server facilitator / relayer.
-4. Credit the user only after the relayed transaction receipt confirms the USDC
-   `Transfer` event.
-
-Mainnet Injective EVM native USDC:
-
-```ts
-export const INJECTIVE_EVM_CHAIN_ID = 1776
-export const NATIVE_USDC_INEVM = '0xa00C59fF5a080D2b954d0c75e46E22a0c371235a'
-
-export const usdcAuthorizationDomain = {
-  name: 'USDC',
-  version: '2',
-  chainId: INJECTIVE_EVM_CHAIN_ID,
-  verifyingContract: NATIVE_USDC_INEVM,
-} as const
-```
-
-Important checks on the server:
-
-- `from` must match the authenticated user's EVM address.
-- `to` must be the expected app facilitator / treasury address.
-- `validBefore` should be short, typically 10-20 minutes.
-- `authorizationState(from, nonce)` must be false before relaying.
-- `balanceOf(from)` must cover `value` before relaying.
-- `verifyTypedData` / recovered signer must equal `from`.
-- The facilitator must keep enough native INJ on Injective EVM to pay relay
-  gas. If relaying fails with `sender balance < tx cost`, top up the
-  facilitator's `0x` address with INJ, not USDC.
-
-Use this pattern for USDC app payments even when the broader product uses RFQ
-gateway fee-payer flows for trading and AuthZ setup. It keeps the user
-experience consistent: users sign intent, the app handles gas.
-
 ## Known Maker Failure Modes
 
 Record maker-level RFQ errors instead of collapsing all quote failures into a

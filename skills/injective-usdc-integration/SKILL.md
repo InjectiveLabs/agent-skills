@@ -29,11 +29,14 @@ Identify which integration the user is asking for:
    address to the Cosmos bank denom, display balances, and use 6 decimals.
 2. **Trading or collateral**: prefer native USDC markets and denoms. Do not keep
    routing new perps through legacy USDT markets when USDC markets exist.
-3. **CCTP bridge UI**: burn native USDC on a supported source chain, poll
+3. **Browser USDC app payments**: for deposits, credits, fees, or top-ups, use
+   EIP-3009 `transferWithAuthorization` with an app gas relayer instead of a
+   direct MetaMask ERC-20 transfer.
+4. **CCTP bridge UI**: burn native USDC on a supported source chain, poll
    Circle's attestation API, then mint native USDC on Injective EVM.
-4. **Withdrawals from Injective**: burn on Injective EVM, poll the attestation,
+5. **Withdrawals from Injective**: burn on Injective EVM, poll the attestation,
    then mint on the destination CCTP chain.
-5. **Recovery or debugging**: if a CCTP burn confirmed but mint did not happen,
+6. **Recovery or debugging**: if a CCTP burn confirmed but mint did not happen,
    re-fetch the message and attestation and submit `receiveMessage` again.
 
 ## Canonical Mainnet Values
@@ -61,6 +64,51 @@ Important distinction:
 - Cosmos bank, exchange, and indexer flows use
   `erc20:0xa00c59ff5a080d2b954d0c75e46e22a0c371235a`.
 - CCTP routes by Circle domain `29`, not EVM chain ID `1776`.
+
+## Browser USDC Payments
+
+For browser USDC deposits, credits, fees, or app top-ups on Injective EVM, avoid
+asking MetaMask to submit a direct ERC-20 `USDC.transfer` from the user. Direct
+transfers make the user pay native INJ gas and can trigger MetaMask's confusing
+`Sending Unknown` / fee-warning screen.
+
+Prefer Circle USDC's EIP-3009 authorization flow:
+
+1. Build typed data for `TransferWithAuthorization`.
+2. Ask the user to sign it with `eth_signTypedData_v4`.
+3. Submit `transferWithAuthorization(from, to, value, validAfter, validBefore, nonce, v, r, s)`
+   from an app-owned facilitator / gas relayer.
+4. Credit the user only after the relayed transaction receipt confirms the USDC
+   `Transfer` event.
+
+Use this EIP-712 domain for native USDC on Injective EVM mainnet:
+
+```ts
+export const INJECTIVE_EVM_CHAIN_ID = 1776
+export const NATIVE_USDC_INEVM = '0xa00C59fF5a080D2b954d0c75e46E22a0c371235a'
+
+export const usdcAuthorizationDomain = {
+  name: 'USDC',
+  version: '2',
+  chainId: INJECTIVE_EVM_CHAIN_ID,
+  verifyingContract: NATIVE_USDC_INEVM,
+} as const
+```
+
+Server-side relayer checks:
+
+- `from` must match the authenticated user's EVM address.
+- `to` must be the expected facilitator / treasury address.
+- `validBefore` should be short, typically 10-20 minutes.
+- `authorizationState(from, nonce)` must be false before relaying.
+- `balanceOf(from)` must cover `value` before relaying.
+- `verifyTypedData` or the recovered signer must equal `from`.
+- The facilitator must keep enough native INJ on Injective EVM to pay relay
+  gas. If relaying fails with `sender balance < tx cost`, top up the
+  facilitator's `0x` address with INJ, not USDC.
+
+This is not Web3Gateway. It is an app-operated relayer pattern for USDC
+payments: users sign intent, the app submits the transaction and pays gas.
 
 ## CCTP V2 Flow
 
@@ -139,4 +187,3 @@ Use public docs when updating constants:
   `https://developers.circle.com/stablecoins/usdc-contract-addresses`
 - Circle supported chains and domains:
   `https://developers.circle.com/cctp/concepts/supported-chains-and-domains`
-
