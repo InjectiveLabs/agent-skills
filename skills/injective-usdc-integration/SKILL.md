@@ -151,6 +151,26 @@ when changing a browser app.
 - Keep CCTP source configs data-driven. Circle adds chains; product UI can
   choose a subset, but constants should not be scattered through components.
 
+## Trading App USDC Balance UX
+
+When CCTP or bridge funding feeds a trading frontend, make the balance display
+conservative:
+
+- Default trade amount inputs blank. Do not prefill `$100` or any fixed stake;
+  many wallets have less, and a prefilled over-balance amount creates an
+  avoidable `Need cash` state.
+- Let explicit controls such as Half or All-In populate amounts from the
+  current visible USDC balance.
+- Truncate displayed USDC balances instead of rounding up, so the UI never
+  implies spendable funds that may not exist after decimals, fees, or stale
+  indexer data.
+- After a bridge or CCTP mint, consider a short-lived local balance floor from
+  the confirmed tx amount while indexer or LCD totals catch up. Clear the floor
+  once the authoritative balance equals or exceeds it, or when it expires.
+- Keep native USDC denoms explicit in code and logs. On Injective EVM the asset
+  is `0xa00C59fF5a080D2b954d0c75e46E22a0c371235a`; on Cosmos bank views it is
+  `erc20:0xa00C59fF5a080D2b954d0c75e46E22a0c371235a`.
+
 ## Common Migration Pattern
 
 When moving an app from USDT or bridged USDC to native USDC:
