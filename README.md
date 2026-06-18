@@ -76,6 +76,36 @@ npx skills add InjectiveLabs/agent-skills --skill injective-usdc-integration
 See [`skills/injective-usdc-integration`](./skills/injective-usdc-integration/README.md)
 for more information.
 
+## injective-frontend-wallet
+
+Build, review, or debug browser frontends that sign and broadcast Injective
+transactions with Keplr, Leap, MetaMask, CosmJS, @injectivelabs/sdk-ts, or
+CosmWasm execute messages.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-frontend-wallet
+```
+
+See [`skills/injective-frontend-wallet`](./skills/injective-frontend-wallet/README.md)
+for more information.
+
+## injective-trading-frontend-ux
+
+Build, review, or debug Injective trading frontend UX for RFQ, orderbook,
+AuthZ/autosign, wallet-connected trading, USDC balances, trade buttons, search,
+and user-facing error states.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-trading-frontend-ux
+```
+
+See [`skills/injective-trading-frontend-ux`](./skills/injective-trading-frontend-ux/README.md)
+for more information.
+
 ## injective-mcp-servers
 
 Set up and use MCP servers that are important for Injective.
