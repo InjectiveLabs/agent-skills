@@ -225,6 +225,19 @@ npx skills add InjectiveLabs/agent-skills --skill injective-trading-staking
 See [`injective-trading-staking`](./skills/injective-trading-staking/README.md)
 for more information.
 
+## injective-x402-payment
+
+Use x402 on Injective to pay for AI services and gated API endpoints directly from the terminal or MCP using USDC.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-x402-payment
+```
+
+See [`injective-x402-payment`](./skills/injective-x402-payment/README.md)
+for more information.
+
 ## linear-cli
 
 Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
