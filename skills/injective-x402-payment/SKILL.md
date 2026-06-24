@@ -26,7 +26,7 @@ The Injective MCP server provides a tool to fetch data from an x402-protected en
 
 To use the `x402_fetch` tool via MCP:
 - **address**: Your Injective wallet address.
-- **password**: Your keystore password to authorize the payment.
+- **password**: Your keystore password to authorize the payment. **SECURITY:** This value must never be logged, echoed, stored in prompts/history, or persisted in any files or telemetry. Integrators must supply it only via secure secret input channels (e.g., a secrets manager or secret input widget) and redact it from any debug output. Never use inline literal strings; use environment variables or secret stores instead.
 - **url**: The URL of the x402-gated endpoint you wish to call.
 - **maxAmount**: (Optional) A safety limit on the maximum USDC amount you are willing to pay for this request.
 
