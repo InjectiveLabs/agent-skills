@@ -31,9 +31,10 @@ To use the `x402_fetch` tool via MCP:
 - **maxAmount**: (Optional) A safety limit on the maximum USDC amount you are willing to pay for this request.
 
 Example:
-When calling an endpoint like `https://agents.injective.com/x402/perps`, the server will return a 402 quote. The MCP tool will handle signing a USDC transfer on Injective EVM to the facilitator and return the final data payload.
+When calling an endpoint like `https://agents.injective.com/x402/perps`, the server will return an x402 quote. The MCP tool will handle signing a USDC transfer on Injective EVM to the facilitator and return the final data payload.
 
 ## Prerequisites
+- The Injective MCP server must be running (see [Injective MCP Servers Skill](https://github.com/InjectiveLabs/agent-skills/blob/master/skills/injective-mcp-servers/SKILL.md) for setup instructions)
 - EVM wallet connected to Injective network
 - A small amount of USDC for payments
-- INJ tokens for gas fees
+- INJ to pay network transaction fees
