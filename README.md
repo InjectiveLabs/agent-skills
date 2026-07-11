@@ -229,4 +229,4 @@ Apache-2.0
 
 ## Terms of use
 
-See [TERMS_OF_USE](/TERMS_OF_USE).
+See [TERMS_OF_USE](./TERMS_OF_USE).
