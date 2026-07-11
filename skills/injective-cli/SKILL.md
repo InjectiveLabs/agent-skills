@@ -67,7 +67,7 @@ diff -u references/injectived-cli-map.md /tmp/injectived-cli-map.new.md
   - These commands are marked unsafe, but they are the required path for raw HEX private key workflows.
   - Never share raw HEX private keys in open channels or public communication.
 - Ledger signing:
-  - Use `--ledger --sign-mode amino-ledger` on Ledger-backed transactions.
+  - Use `--ledger` flag on Ledger-backed transactions.
   - Example:
     - `injectived tx bank send <from> <to> <amount> --ledger --chain-id injective-1 --gas auto --gas-prices 160000000inj --yes`
 - Use `--yes` on transactions to skip interactive confirmation.
