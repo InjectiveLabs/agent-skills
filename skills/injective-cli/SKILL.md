@@ -4,7 +4,7 @@ description: Use the Injective `injectived` CLI against a chain with consistent 
 license: Apache-2.0
 metadata:
   author: InjectiveLabs
-  version: "1.18.0"
+  version: "1.20.2"
 ---
 
 # Injective CLI, Skill Guide
@@ -69,7 +69,7 @@ diff -u references/injectived-cli-map.md /tmp/injectived-cli-map.new.md
 - Ledger signing:
   - Use `--ledger --sign-mode amino-ledger` on Ledger-backed transactions.
   - Example:
-    - `injectived tx bank send <from> <to> <amount> --ledger --sign-mode amino-ledger --chain-id injective-1 --gas auto --gas-prices 160000000inj --yes`
+    - `injectived tx bank send <from> <to> <amount> --ledger --chain-id injective-1 --gas auto --gas-prices 160000000inj --yes`
 - Use `--yes` on transactions to skip interactive confirmation.
 - Use `--gas auto --gas-adjustment 1.5 --gas-prices 160000000inj` for fee estimation.
 - After broadcasting, verify with `injectived q tx <tx_hash>`.
