@@ -213,6 +213,22 @@ npx skills add InjectiveLabs/agent-skills --skill injective-trading-staking
 See [`injective-trading-staking`](./skills/injective-trading-staking/README.md)
 for more information.
 
+## injective-memecoin-trading
+
+Launch and trade memecoins on Injective from an agent.
+Covers SHROOM Pad bonding curves (create a token, buy/sell the curve, graduation to a CLMM pool,
+creator/referral fee claims) and Choice aggregator swaps for any graduated or listed token,
+plus discovery, OHLCV candles, and USD portfolio valuation.
+Uses the `trippy-mcp` MCP server, which is non-custodial and holds a budgeted burner key
+with a local spend policy.
+Complements the Injective MCP server, which owns perpetuals, subaccounts, bridges, and transfers.
+
+Install via NPM:
+
+```bash
+npx skills add InjectiveLabs/agent-skills --skill injective-memecoin-trading
+```
+
 ## linear-cli
 
 Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
