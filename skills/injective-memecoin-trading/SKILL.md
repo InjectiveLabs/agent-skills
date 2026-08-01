@@ -32,28 +32,45 @@ server (see *Alongside the Injective MCP server* below).
 
 ## Setup
 
-The server is non-custodial: the key is generated on the user's machine at init
-and never leaves it.
+Requires Node.js 20 or newer. The server is non-custodial: the key is generated
+on the user's machine at init and never leaves it.
 
 ```bash
 npx -y trippy-mcp init --name <agent-name> --owner <your-main-wallet-0x-or-inj1>
 ```
 
+**This creates a mainnet wallet.** `--network` defaults to `mainnet`, so the
+address printed at the end takes real funds. `--network testnet` exists but is
+not a rehearsal of the mainnet flow: that deployment ships the bonding-curve
+contract only, with no discovery API, no Choice aggregator and no agent
+registry, so `trending`, `search_tokens`, swaps and registration have nowhere to
+call until those endpoints are set by hand in `~/.trippy-mcp/config.json`.
+
 `init` generates the wallet, fixes the sweep destination (immutable), registers
-the agent name, and writes the MCP entry into whichever coding agents it finds
-(Claude Code, Codex, Cursor, Windsurf). To wire up more clients later:
+the agent name, and writes a **user-scope** MCP entry into whichever coding
+agents it finds (Claude Code, Codex, Cursor, Windsurf). If the keystore is
+encrypted, that entry carries `TRIPPY_MCP_PASSPHRASE` as plaintext in the
+client's own config file (`~/.claude.json`, `~/.codex/config.toml`), written
+0600. Anything that can read those files can unlock the keystore. To see the
+config before it is written, init without connecting and wire clients up
+yourself:
 
 ```bash
-trippy-mcp connect --client claude,codex        # or --client all
-trippy-mcp connect --scope project              # writes ./.mcp.json
+npx -y trippy-mcp init --name <agent-name> --owner <owner> --no-connect
+npx -y trippy-mcp connect --client claude,codex        # or --client all
+npx -y trippy-mcp connect --client claude --no-passphrase   # supply it via env
+npx -y trippy-mcp connect --scope project              # writes ./.mcp.json
 ```
+
+`--scope project` never writes the passphrase, since `.mcp.json` is committed;
+export `TRIPPY_MCP_PASSPHRASE` in the shell for those.
 
 Then fund the agent wallet with a small amount of INJ. It is a budget, not a
 treasury.
 
 ```bash
-trippy-mcp status          # balances + remaining policy budget
-trippy-mcp sweep INJ all   # pull funds back to the owner address
+npx -y trippy-mcp status          # balances + remaining policy budget
+npx -y trippy-mcp sweep INJ all   # pull funds back to the owner address
 ```
 
 If your harness shows a flat tool list and bare verbs like `buy` are ambiguous,
@@ -85,7 +102,7 @@ set `TRIPPY_MCP_TOOL_PREFIX=trippy` in the server env to register `trippy_buy`,
 2. **Inspect** with `token_info` (curve state, graduation progress) and
    `candles` (momentum). `recent_trades` shows who is actually buying.
 3. **Quote before every trade.** `quote` runs the real on-chain curve math or a
-   live Choice SOR route. Never size a trade off `token_info` prices alone.
+   live Choice SOR route. Never size a trade based only on `token_info` prices.
 4. **Execute** with `buy` / `sell`. Routing is automatic: an active bonding-curve
    launch trades on SHROOM Pad over EVM; anything graduated or listed swaps
    through the Choice aggregator against INJ by default.
@@ -100,6 +117,11 @@ A policy engine sits between the tools and the private key, inside the signer:
 - `maxSlippageBps` — hard clamp on any slippage the model asks for
 - contract allowlist — only the launchpad, aggregator and quote assets
 - `allowUnpricedSpend: false` — spends with no resolvable USD price are refused
+
+`allowUnpricedSpend: true` is an unsafe operator override, not a retry option.
+An unpriced spend has no USD figure to test, so flipping it does not widen the
+caps, it skips them: the per-tx cap and the 24h budget are never evaluated, and
+the spend is never recorded against the budget either. Leave it `false`.
 
 Denials come back as errors and are **final**. Do not retry around one by
 splitting the trade, switching venue, or lowering the quote asset. Ask the
