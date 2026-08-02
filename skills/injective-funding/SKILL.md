@@ -1,7 +1,7 @@
 ---
 name: injective-funding
 description: Mass fund Injective wallets with INJ, USDT, or USDC. Batch bank transfers (MsgSend), deposit to exchange subaccounts, top up taker wallets, and check balances across many wallets. Supports batching 200+ transfers in a single transaction. Also covers public-facing faucet servers that accept caller-supplied addresses in either inj1 or 0x form.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ck
   version: "1.1.0"

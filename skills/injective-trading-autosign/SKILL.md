@@ -2,7 +2,7 @@
 name: injective-trading-autosign
 description: Set up AuthZ delegation on Injective for session-based auto-trading. Grants a scoped, time-limited permission to an ephemeral key so the AI can place and close perpetual trades without a wallet popup or password prompt for every order. Use authz_grant to enable, authz_revoke to disable. Requires the Injective MCP server to be connected.
 uses: ["injective-mcp-servers", "injective-faucet"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

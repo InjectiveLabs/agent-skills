@@ -2,7 +2,7 @@
 name: injective-trading-tokens
 description: Look up metadata for any Injective token or denom. Resolves native tokens (INJ), Peggy ERC-20 bridged tokens (USDT, USDC, WETH), IBC assets (ATOM, OSMO), TokenFactory tokens, and EVM ERC-20s to their human-readable symbol, decimals, and type. Also supports sending tokens between addresses and depositing/withdrawing from trading subaccounts. Requires the Injective MCP server to be connected.
 uses: ["injective-mcp-servers"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

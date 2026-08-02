@@ -1,7 +1,7 @@
 ---
 name: injective-core-detect-changes
 description: "Detect breaking changes in Injective core between two tagged releases. For use in developer documentation and release notes."
-license: MIT
+license: Apache-2.0
 metadata:
   author: bguiz
   version: "0.0.1"

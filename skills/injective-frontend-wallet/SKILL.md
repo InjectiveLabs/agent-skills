@@ -1,7 +1,7 @@
 ---
 name: injective-frontend-wallet
 description: Build, review, or debug browser frontends that sign and broadcast Injective transactions with Keplr, Leap, MetaMask, CosmJS, @injectivelabs/sdk-ts, or CosmWasm execute messages. Use this whenever implementing Injective React/Vite/Next apps, wallet connect flows, swap-contract UIs, MsgExecuteContract, MsgBroadcaster, or when errors mention EthAccount, ethsecp256k1, invalid pubkey, account sequence, signer address, Keplr, Leap, or browser wallet signing.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "1.0.0"

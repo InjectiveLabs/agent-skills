@@ -8,7 +8,7 @@ description: >-
   native USDC, select USDC derivative markets, or build a CCTP bridge UI. Covers
   Injective EVM chain IDs, Cosmos bank denom mapping, CCTP domains and contract
   addresses, frontend wallet flow, attestation recovery, and production gotchas.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ck
   version: "1.0.0"

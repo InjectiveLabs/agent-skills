@@ -2,7 +2,7 @@
 name: injective-trading-bridge
 description: Bridge tokens to and from Injective using deBridge DLN (fast, cross-chain) or Peggy (Ethereum canonical bridge). Supports inbound bridges from Arbitrum, Ethereum, Base, Polygon, BSC, Avalanche, and Optimism into Injective, and outbound bridges from Injective to any deBridge-supported chain. Get quotes before executing. Requires the Injective MCP server to be connected.
 uses: ["injective-mcp-servers"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

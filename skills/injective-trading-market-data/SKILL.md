@@ -2,7 +2,7 @@
 name: injective-trading-market-data
 description: Access real-time market data for Injective perpetual futures markets. Query oracle prices, list all active markets with metadata (tick size, min notional, max leverage), and retrieve current spread and funding information. Requires the Injective MCP server to be connected.
 uses: ["injective-mcp-servers"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

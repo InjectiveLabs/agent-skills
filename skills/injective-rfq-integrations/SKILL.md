@@ -10,7 +10,7 @@ description: >-
   integrations. Covers mainnet parameters, canonical decimals, quote windows,
   signer slots, market discovery, quote-hit diagnostics, and production RFQ
   gotchas.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ck
   version: "1.0.0"

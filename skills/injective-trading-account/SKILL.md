@@ -2,7 +2,7 @@
 name: injective-trading-account
 description: Analyze any Injective wallet address. Query bank balances across all token types (INJ, USDT, IBC assets, Peggy ERC-20s), inspect trading subaccount balances, and view open perpetual positions with unrealized P&L. Useful for portfolio monitoring, position management, and pre-trade checks. Requires the Injective MCP server to be connected.
 uses: ["injective-mcp-servers"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

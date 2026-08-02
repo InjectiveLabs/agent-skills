@@ -2,7 +2,7 @@
 name: injective-trading-staking
 description: Query and manage Injective staking delegations, rewards, and validator info. Look up staker addresses, delegation amounts, unbonding status, and claimed rewards via Injective LCD/REST API.
 uses: []
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"

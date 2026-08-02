@@ -1,7 +1,7 @@
 ---
 name: injective-trading-frontend-ux
 description: Build, review, or debug Injective trading frontend UX for RFQ, orderbook, AuthZ/autosign, wallet-connected trading, USDC balances, trade buttons, search, and user-facing error states. Use this whenever implementing or reviewing a browser trading app on Injective, especially if the UI opens or closes positions, cashes out, uses max leverage, uses RFQ/AuthZ/autosign, displays USDC balances, or handles transaction failures.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "1.0.0"

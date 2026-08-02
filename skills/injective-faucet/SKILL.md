@@ -2,7 +2,7 @@
 name: injective-faucet
 description: Create and operate an INJ faucet for initializing fresh Injective wallets. Sends a small amount of INJ via EVM to create on-chain accounts and provide gas for AuthZ grants. Handles the circular dependency where fresh wallets can't transact without gas but can't receive gas without an account. Pairs with injective-trading-autosign for zero-friction onboarding.
 uses: ["injective-trading-autosign"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "1.0.0"

@@ -2,7 +2,7 @@
 name: injective-trading-chain-analysis
 description: Analyze Injective chain-level code and protocol specs. Read Go source from injective-core, explain exchange module features (position offsetting, liquidations, margin tiers, funding), and identify spec gaps. Use when discussing chain mechanics, reviewing Injective Go code, or explaining protocol behavior.
 uses: ["injective-mcp-servers"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "0.0.0"
