@@ -72,6 +72,7 @@ Edit `~/.claude/mcp.json` or the MCP configuration within your project to includ
 
 Perform MCP tool calls:
 
+- `address_normalize` - Accept an `inj1...` or `0x...` address and return both canonical encodings.
 - `wallet_generate` - Generate a new Injective wallet. Returns address + mnemonic (shown once).
 - `wallet_import` - Import a wallet from a hex private key.
 - `wallet_list` - List all wallets in the local keystore (addresses only - no keys).
@@ -81,6 +82,14 @@ Perform MCP tool calls:
 - `account_balances` - Get bank + subaccount balances. Supports all token types.
 - `account_positions` - Get open perpetual positions with unrealized P&L.
 - `token_metadata` - Look up symbol, decimals, and type for any denom.
+- `usdc_native_info` - Return native Injective USDC metadata, including EVM address, Cosmos denom, decimals, CCTP domain, and contracts.
+- `cctp_supported_chains` - Return common Circle CCTP V2 source-chain configs and aliases for native USDC flows into Injective.
+- `cctp_attestation_status` - Check Circle Iris attestation status for a CCTP burn transaction. Read-only.
+- `cctp_mint` - Submit `receiveMessage(message, attestation)` on Injective EVM after an attestation is complete. Real transaction.
+- `rfq_constants` - Return RFQ contract, gateway, websocket, chain IDs, and the default quote collection window.
+- `rfq_market_readiness` - List active derivative markets and mark which ones match the RFQ quote denom. Read-only.
+- `frontend_guidance_topics` - List read-only frontend guidance topics available from the MCP server.
+- `frontend_guidance` - Return Injective browser trading guidance, optionally filtered by topic. Read-only.
 - `trade_open` - Open a position with a market order (Cosmos signing).
 - `trade_close` - Close an open position with a market order (Cosmos signing).
 - `trade_open_eip712` - Open a position using EIP-712 Ethereum signing (MetaMask-compatible keys).
@@ -95,6 +104,10 @@ Perform MCP tool calls:
 - `bridge_withdraw_to_eth` - Withdraw to Ethereum via the Peggy bridge (~30 min, fee applies).
 - `bridge_debridge_quote` - Get a deBridge DLN quote to any supported chain. Read-only.
 - `bridge_debridge_send` - Bridge tokens from Injective to another chain via deBridge DLN.
+- `bridge_debridge_inbound_quote` - Get a deBridge DLN quote from an external chain into Injective. Read-only.
+- `bridge_debridge_inbound_send` - Bridge tokens from an external chain into Injective via deBridge DLN. Real cross-chain transaction.
+- `authz_grant` - Grant another Injective address permission to execute selected trading messages. Real transaction.
+- `authz_revoke` - Revoke previously granted trading permissions. Real transaction.
 - `evm_broadcast` - Broadcast a raw EVM transaction on Injective EVM.
 
 See: https://raw.githubusercontent.com/InjectiveLabs/mcp-server/refs/heads/main/README.md
@@ -139,5 +152,5 @@ This skill does not use or depend upon any other skill.
 
 ## Prerequisites
 
-Must have Node.js v22 or higher.
+Must have Node.js v24 or higher, matching the MCP server package requirement.
 Check with `node -v`.
