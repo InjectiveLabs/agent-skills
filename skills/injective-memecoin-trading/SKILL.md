@@ -1,10 +1,10 @@
 ---
 name: injective-memecoin-trading
-description: Launch and trade memecoins on Injective from an agent. Covers SHROOM Pad bonding curves (create a token, buy/sell the curve, graduation to a CLMM pool, creator/referral fee claims) and Choice aggregator swaps for any graduated or listed token, plus discovery, OHLCV candles and USD portfolio valuation. Uses the trippy-mcp MCP server, which is non-custodial and holds a budgeted burner key with a local spend policy. Complements the Injective MCP server, which owns perpetuals, subaccounts, bridges and transfers.
+description: Launch and trade memecoins on Injective from an agent. Covers SHROOM Pad bonding curves (create a token, buy/sell the curve, graduation to a CLMM pool, creator/referral fee claims) and Choice aggregator swaps for any graduated or listed token, plus discovery, OHLCV candles, USD portfolio valuation, live protocol documentation, and airdrops to a holder snapshot by merkle claim drop or direct push. Uses the trippy-mcp MCP server, which generates its signing key on the user's own machine and enforces a spend policy inside the signer. Complements the Injective MCP server, which owns perpetuals, subaccounts, bridges and transfers.
 license: MIT
 metadata:
   author: danvaneijck
-  version: "1.0.0"
+  version: "1.1.0"
   bashPattern:
     - "trippy-mcp"
     - "shroom"
@@ -81,6 +81,7 @@ set `TRIPPY_MCP_TOOL_PREFIX=trippy` in the server env to register `trippy_buy`,
 
 | Tool | Use |
 |---|---|
+| `explain` | How the protocols actually work — curve mechanics, which quote asset to launch against, every fee and discount gate, Choice routing gotchas, this agent's own policy. Every number is read from the chain at call time. Start here rather than guessing |
 | `search_tokens` | Resolve a symbol / launch id / 0x address / denom to a venue |
 | `token_info` | Curve state + graduation progress, or Choice market overview |
 | `trending`, `new_launches` | Discovery across curve and DEX |
@@ -95,6 +96,8 @@ set `TRIPPY_MCP_TOOL_PREFIX=trippy` in the server env to register `trippy_buy`,
 | `wallet_status` | Addresses, balances, policy budget, registration |
 | `sweep` | Return funds to the owner address fixed at init |
 | `agent_info` | Identity and how the operator claims the agent |
+| `airdrop_preview`, `airdrop_execute`, `airdrop_status` | Pay out to a holder snapshot. Only registered when the operator has set `policy.airdropCapUsd` above 0 |
+| `airdrop_manage` | Claw back, extend, freeze or pause a campaign this agent created |
 
 ## Core workflow
 
@@ -129,6 +132,35 @@ operator to raise the limit in `~/.trippy-mcp/config.json` instead.
 
 `sweep` takes no destination argument. It can only pay the owner address fixed
 at init, so it is not a general transfer tool and cannot be steered elsewhere.
+
+## Airdrops, if they are switched on
+
+An airdrop is the one action that sends value to addresses the operator never
+named, which is exactly what the fixed sweep destination prevents everywhere
+else. So it carries its own ceiling (`airdropCapUsd`, separate from the trade
+cap), it still consumes the shared 24h budget, and a drop that cannot be priced
+in USD is refused outright — `allowUnpricedSpend` does not apply here.
+
+Two calls, never one. `airdrop_preview` snapshots holders, allocates and caches
+a plan; it publishes and broadcasts nothing. `airdrop_execute` takes that
+planId and nothing else, so criteria can never go straight to a broadcast.
+**Read the preview before executing** — recipient count, exact total, top
+recipients, and what got filtered out and why.
+
+Which rail matters. A `claim_drop` funds one transaction and recipients claim
+from a link; unclaimed funds come back after the expiry. A `push` sends straight
+to every wallet and is **irreversible** — no claim step, no expiry, no clawback,
+and a wrong address is somebody else's money. Prefer `claim_drop` unless
+recipients genuinely must not have to do anything.
+
+If a push run stops partway, call `airdrop_execute` again with the **same**
+planId. That is the resume, and it settles whatever was in the air before
+sending anything, so nobody is paid twice. Do not preview again — a fresh plan
+knows nothing about who has already been paid.
+
+Call `airdrop_manage {campaignId}` with no action to see which actions the
+campaign will accept and why the rest will not. That check is local and free, so
+use it instead of signing to find out. `clawback` and `freeze` are irreversible.
 
 ## Alongside the Injective MCP server
 

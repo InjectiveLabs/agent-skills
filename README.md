@@ -218,9 +218,12 @@ for more information.
 Launch and trade memecoins on Injective from an agent.
 Covers SHROOM Pad bonding curves (create a token, buy/sell the curve, graduation to a CLMM pool,
 creator/referral fee claims) and Choice aggregator swaps for any graduated or listed token,
-plus discovery, OHLCV candles, and USD portfolio valuation.
-Uses the `trippy-mcp` MCP server, which is non-custodial and holds a budgeted burner key
-with a local spend policy.
+plus discovery, OHLCV candles, USD portfolio valuation, live protocol documentation,
+and airdrops to a holder snapshot by merkle claim drop or direct push.
+Uses the `trippy-mcp` MCP server, which generates its signing key on the user's own machine
+and never transmits it; a spend policy (per-transaction and 24h USD caps, a slippage clamp,
+a contract allowlist and a fixed sweep destination) is enforced inside the signer itself,
+so it applies to every call rather than depending on the model's cooperation.
 Complements the Injective MCP server, which owns perpetuals, subaccounts, bridges, and transfers.
 
 Install via NPM:
