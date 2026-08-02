@@ -1,7 +1,7 @@
 ---
 name: injective-mcp-servers
 description: Set up and run Injective MCP servers. Needed by multiple Injective skills which perform MCP tool calls. 
-license: MIT
+license: Apache-2.0
 metadata:
   author: bguiz
   version: "0.0.0"

@@ -3,7 +3,7 @@ name: injective-docs-style
 description: Audit and report adherence to Injective's documentation standards
 activates_on: ["*.md", "*,mdx*", "*.txt"]
 uses: ["injective-mcp-servers", "devrel-docs-style"]
-license: MIT
+license: Apache-2.0
 metadata:
   author: bguiz
   version: "0.0.0"

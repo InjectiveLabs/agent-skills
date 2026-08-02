@@ -1,7 +1,7 @@
 ---
 name: injective-wallet-ops
 description: Mass create, derive, and manage Injective wallets. Generate wallets from mnemonics (BIP-44 HD derivation), create random wallets, convert between ETH/INJ addresses, and batch fund wallets with INJ or USDT. Supports bulk wallet generation and batch funding.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ck
   version: "1.0.0"

@@ -1,7 +1,7 @@
 ---
 name: injective-ai-cost-optimization
 description: Optimize AI API costs for agentic trading bots. Covers Anthropic token cost tracking, web search cost management, CoinGecko/Massive.com data sourcing, shared caching strategies, and per-user cost caps. Learned from real production data showing web search inflates costs 10-17x.
-license: MIT
+license: Apache-2.0
 metadata:
   author: ckhbtc
   version: "1.0.0"
