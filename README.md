@@ -213,6 +213,22 @@ npx skills add InjectiveLabs/agent-skills --skill injective-trading-staking
 See [`injective-trading-staking`](./skills/injective-trading-staking/README.md)
 for more information.
 
+## cosmowarp-perp-dex
+
+Read from and write to the Cosmowarp perpetual futures market contracts on
+Injective testnet. Query market metadata, open positions, pool state, manage
+leverage, limit orders, and close positions. Useful for building or debugging
+frontend integrations for the CygnusX perpetual DEX.
+
+Install via NPM:
+
+```bash
+npx skills add https://github.com/InjectiveLabs/agent-skills --skill cosmowarp-perp-dex
+```
+
+See [`skills/cosmowarp-perp-dex`](./skills/cosmowarp-perp-dex/README.md)
+for more information.
+
 ## linear-cli
 
 Use the `linear` CLI to manage Linear issues, teams, and projects from the terminal with consistent authentication and configuration handling.
