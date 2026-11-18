@@ -3,7 +3,8 @@ skills/injective-governance/
 
 CLAUDE.md
 .DS_Store
-.vscode
 .opencode
 .codex
 .amp
+config.bat
+node_modules
